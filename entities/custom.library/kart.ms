@@ -77,21 +77,19 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 	})[0]);
 	@stand = spawn_entity('ARMOR_STAND', 1, @loc, closure(@stand) {
 		set_entity_saves_on_unload(@stand, false);
+		set_entity_attribute_base(@stand, 'GENERIC_SCALE', 0.3);
 		set_entity_spec(@stand, array(
-			baseplate: false,
 			smalL: true,
-			arms: true,
-			poses: array(
-				poseLegLeft: array(-1.54, -0.32, -0.02),
-				poseLegRight: array(-1.45, 0.39, 0.0),
-				poseArmLeft: array(-1.55, 0.0, -0.01),
-				poseArmRight: array(-1.58, -0.09, -0.01))));
-		set_mob_equipment(@stand, array(
-			chestplate: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(255,0,0))),
-			leggings: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(255,0,0))),
-			boots: array(name: 'LEATHER_BOOTS', meta: array(color: array(255,0,0))),
-		));
+			visible: false));
 	})[0];
+	@mannequin = spawn_entity('MANNEQUIN', 1, @loc, closure(@mannequin) {
+		set_entity_saves_on_unload(@mannequin, false);
+		set_entity_attribute_base(@mannequin, 'GENERIC_SCALE', 0.8);
+	})[0];
+	runas('~console', '/data modify entity '.@mannequin.' profile set value '.@player);
+	@kart['stand'] = @stand;
+	@kart['mannequin'] = @mannequin;
+	set_entity_rider(@stand, @mannequin);
 	set_entity_rider(@vehicle, @stand);
 	set_entity_invulnerable(@stand, true);
 	@head = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@head) {
@@ -101,12 +99,12 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 			brightness: @brightness,
 			teleportduration: @teleportduration,
 			transformation: array(
-				translation: array(x: 0.0, y: 0.42, z: 0.0),
+				translation: array(x: 0.0, y: 0.26, z: 0.0),
 				scale: array(x: 1.2, y: 1.2, z: 1.2),
 				leftRotation: array(x: 0.0, y: 1.0, z: 0.0, w: 0.0))));
 	})[0];
 	@kart['head'] = @head;
-	set_entity_rider(@stand, @head);
+	set_entity_rider(@mannequin, @head);
 	@item = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@item) {
 		set_entity_saves_on_unload(@item, false);
 		set_display_entity(@item, array(
@@ -294,7 +292,9 @@ proc _kart_remove(@player, @kart) {
 	entity_remove(@kart['engine']);
 	entity_remove(@kart['camera']);
 	entity_remove(@kart['head']);
-	entity_remove(@kart['collider']);
+	entity_remove(@kart['mannequin']);
+	try(entity_remove(@kart['stand']))
+	try(entity_remove(@kart['collider']))
 }
 
 /**
@@ -324,8 +324,48 @@ proc _kart_tick(@player, @kart, @race = null) {
 			clear_task();
 			die();
 		}
-		if(!entity_exists(@display) || !entity_exists(@collider)) {
+		if(!entity_exists(@display)) {
 			clear_task();
+			die();
+		}
+		
+		if(@kart['explode'] || !entity_exists(@collider)) {
+			clear_task();
+			@components = get_entity_riders(@display);
+			@components[] = @display;
+			@loc = entity_loc(@display);
+			set_display_entity(@display, array(teleportduration: 12));
+			set_entity_loc(@display, location_shift(@loc, 'up', 1));
+			@animationDurationTicks = 12;
+			foreach(@entity in @components) {
+				if(entity_type(@entity) !== 'ARMOR_STAND') {
+					@translation = get_display_entity(@entity)['transformation']['translation'];
+					set_display_entity(@entity, array(
+						interpolationduration: @animationDurationTicks,
+						startinterpolation: 0,
+						transformation: array(
+							translation: array(x: @translation['x'] * rand(4, 7), y: @translation['y'] * rand(4, 7), z: @translation['z'] * rand(4, 7)),
+							leftRotation: array(x: rand() * 2 - 1, y: rand() * 2 - 1, z: rand() * 2 - 1, w: rand() * 2 - 1))));
+				} else {
+					set_entity_rider(null, @entity);
+					@kart['lastVelocity']['y'] += 0.6;
+					set_entity_velocity(@entity, @kart['lastVelocity']);
+				}
+			}
+			spawn_particle(@loc, array(particle: 'EXPLOSION_HUGE'));
+			play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE', volume: @kart['camdist']));
+			stop_sound(@player, 'ENTITY_BEE_LOOP');
+			if(@race) {
+				foreach(@otherplayer in array_keys(@race['players'])) {
+					psend_block_change(@otherplayer, @loc, 'fire');
+				}
+			}
+			set_timeout(@animationDurationTicks * 50, closure(){
+				_kart_remove(@player, @kart);
+				if(@race) {
+					_race_on_move(@player, @loc, @race);
+				}
+			});
 			die();
 		}
 
@@ -460,9 +500,11 @@ proc _kart_tick(@player, @kart, @race = null) {
 			@lastVelocity = @kart['lastVelocity'];
 			if(@currentVelocity['x'] == 0 && abs(@lastVelocity['x']) > 0.05) { // if velocity stopped on this axis
 				if(abs(@kart['loc']['x'] - @loc['x']) < 0.01) { // if movement stopped on this axis
+					@kart['lastVelocity'] = @currentVelocity;
 					if(abs(@lastVelocity['x']) > abs(@lastVelocity['z'])) { // angle of collision
 						if(abs(@lastVelocity['x']) > 0.3) { // magnitude of collision
 							@kart['explode'] = true;
+							@kart['lastVelocity'] = @lastVelocity;
 						}
 						stop_sound(@player, 'ENTITY_BEE_LOOP');
 						@kart['speed'] = 0.0;
@@ -474,7 +516,6 @@ proc _kart_tick(@player, @kart, @race = null) {
 						}
 						@kart['speed'] *= 0.7;
 					}
-					@kart['lastVelocity'] = @currentVelocity;
 					play_named_sound(@display, array(
 						sound: 'block.vault.break',
 						pitch: 1.3 - @kart['speed'],
@@ -482,9 +523,11 @@ proc _kart_tick(@player, @kart, @race = null) {
 				}
 			} else if(@currentVelocity['z'] == 0 && abs(@lastVelocity['z']) > 0.05) {
 				if(abs(@kart['loc']['z'] - @loc['z']) < 0.01) {
+					@kart['lastVelocity'] = @currentVelocity;
 					if(abs(@lastVelocity['z']) > abs(@lastVelocity['x'])) {
 						if(abs(@lastVelocity['z']) > 0.3) {
 							@kart['explode'] = true;
+							@kart['lastVelocity'] = @lastVelocity;
 						}
 						stop_sound(@player, 'ENTITY_BEE_LOOP');
 						@kart['speed'] = 0.0;
@@ -496,7 +539,6 @@ proc _kart_tick(@player, @kart, @race = null) {
 						}
 						@kart['speed'] *= 0.7;
 					}
-					@kart['lastVelocity'] = @currentVelocity;
 					play_named_sound(@display, array(
 						sound: 'block.vault.break',
 						pitch: 1.3 - @kart['speed'],
@@ -686,47 +728,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 			create_bar(@player.'kart', array(style: 'SEGMENTED_20', percent: 0.0));
 			bar_add_player(@player.'kart', @player);
 		}
-
-		if(@kart['explode']) {
-			clear_task();
-			@components = get_entity_riders(@display);
-			@components[] = @display;
-			set_display_entity(@display, array(teleportduration: 12));
-			set_entity_loc(@display, location_shift(@loc, 'up', 2));
-			@animationDurationTicks = 12;
-			foreach(@entity in @components) {
-				if(entity_type(@entity) !== 'ARMOR_STAND') {
-					@translation = get_display_entity(@entity)['transformation']['translation'];
-					set_display_entity(@entity, array(
-						interpolationduration: @animationDurationTicks,
-						startinterpolation: 0,
-						transformation: array(
-							translation: array(x: @translation['x'] * rand(4, 7), y: @translation['y'] * rand(4, 7), z: @translation['z'] * rand(4, 7)),
-							leftRotation: array(x: rand() * 2 - 1, y: rand() * 2 - 1, z: rand() * 2 - 1, w: rand() * 2 - 1))));
-				} else {
-					set_entity_spec(@entity, array(
-						poses: array(
-							poseLegLeft: array(-0.03, 0.0, -0.57),
-							poseLegRight: array(0.0, 0.0, 0.5),
-							poseArmLeft: array(-0.27, 0.0, -1.57),
-							poseArmRight: array(-0.12, 0.0, 1.57))));
-				}
-			}
-			spawn_particle(@loc, array(particle: 'EXPLOSION_HUGE'));
-			play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE', volume: @kart['camdist']));
-			stop_sound(@player, 'ENTITY_BEE_LOOP');
-			if(@race) {
-				foreach(@otherplayer in array_keys(@race['players'])) {
-					psend_block_change(@otherplayer, @loc, 'fire');
-				}
-			}
-			set_timeout(@animationDurationTicks * 50, closure(){
-				_kart_remove(@player, @kart);
-				if(@race) {
-					_race_on_move(@player, @loc, @race);
-				}
-			});
-		} else if(@race) {
+		if(@race) {
 			// Check movement on course
 			_race_on_move(@player, @loc, @race);
 		}
