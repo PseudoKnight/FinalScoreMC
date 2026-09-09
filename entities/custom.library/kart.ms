@@ -48,9 +48,9 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 	@collider = spawn_entity('ARMOR_STAND', 1, @loc, closure(@collider) {
 		set_entity_saves_on_unload(@collider, false);
 		set_entity_attribute_base(@collider, 'GENERIC_STEP_HEIGHT', 0.5);
-		set_entity_invulnerable(@collider, true);
 		set_entity_spec(@collider, array(visible: false));
-		set_entity_size(@collider, 1.4, 1.4);
+		set_entity_size(@collider, 1.5, 1.5);
+		add_scoreboard_tag(@collider, 'kart_collider');
 	})[0];
 	@kart['collider'] = @collider;
 	@vehicle = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@engineDisplay) {
@@ -118,7 +118,7 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 	set_entity_rider(@vehicle, @item);
 	set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@steeringwheel) {
 		set_entity_saves_on_unload(@steeringwheel, false);
-		set_entity_spec(@steeringwheel, array(item: array(name: 'MUSIC_DISC_STAL')));
+		set_entity_spec(@steeringwheel, array(item: array(name: 'STRUCTURE_VOID')));
 		set_display_entity(@steeringwheel, array(
 			brightness: @brightness,
 			teleportduration: @teleportduration,
@@ -355,7 +355,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 			spawn_particle(@loc, array(particle: 'EXPLOSION_HUGE'));
 			play_sound(@loc, array(sound: 'ENTITY_GENERIC_EXPLODE', volume: @kart['camdist']));
 			stop_sound(@player, 'ENTITY_BEE_LOOP');
-			if(@race) {
+			if(@race && get_block(location_shift(@loc, 'down')) !== 'AIR') {
 				foreach(@otherplayer in array_keys(@race['players'])) {
 					psend_block_change(@otherplayer, @loc, 'fire');
 				}

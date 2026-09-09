@@ -54,6 +54,12 @@ proc _race_bind_events(@race) {
 				_race_on_move(player(), @event['to'], @race);
 			}
 		}
+	} else {
+		@race['binds'][] = bind('entity_damage', null, array(type: 'ARMOR_STAND'), @event) {
+			if(@event['cause'] !== 'FALL' && has_scoreboard_tag(@event['id'], 'kart_collider')) {
+				entity_remove(@event['id']);
+			}
+		}
 	}
 }
 
