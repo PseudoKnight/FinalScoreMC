@@ -166,7 +166,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 	}
 }
 
-bind('projectile_launch', null, array(type: 'FIREWORK', shootertype: null), @event) {
+bind('projectile_launch', null, array(type: 'FIREWORK', shootertype: 'block'), @event) {
 	if(@event['velocity']['y'] < 0.45 && @event['velocity']['magnitude'] < 0.7) {
 		set_entity_spec(@event['id'], array(strength: entity_spec(@event['id'])['strength'] * 3));
 	}
