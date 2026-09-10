@@ -651,8 +651,8 @@ proc _kart_tick(@player, @kart, @race = null) {
 			@particle2 = array(particle: 'CAMPFIRE_SIGNAL_SMOKE');
 			@particleLoc = @loc[];
 			@right = get_vector(array(yaw: @loc['yaw'] + 90, pitch: 0));
-			@particleLoc['x'] += @right['x'] * 0.77 - @forward['x'] * 0.5 - @velocity['x'];
-			@particleLoc['z'] += @right['z'] * 0.77 - @forward['z'] * 0.5 - @velocity['z'];
+			@particleLoc['x'] += @right['x'] * 0.77 - @forward['x'] * 0.5 - @velocity['x'] * 2;
+			@particleLoc['z'] += @right['z'] * 0.77 - @forward['z'] * 0.5 - @velocity['z'] * 2;
 			spawn_particle(@particleLoc, @particle);
 			spawn_particle(@particleLoc, @particle2);
 			if(@boostready) {
@@ -684,8 +684,8 @@ proc _kart_tick(@player, @kart, @race = null) {
 			@particleLoc = @loc[];
 			@right = get_vector(array(yaw: @loc['yaw'] + 90, pitch: 0));
 			@r = rand() * 0.24 - 0.12;
-			@particleLoc['x'] += @right['x'] * (0.77 + @r) - @forward['x'] * 0.5 - @velocity['x'];
-			@particleLoc['z'] += @right['z'] * (0.77 + @r) - @forward['z'] * 0.5 - @velocity['z'];
+			@particleLoc['x'] += @right['x'] * (0.77 + @r) - @forward['x'] * 0.5 - @velocity['x'] * 2;
+			@particleLoc['z'] += @right['z'] * (0.77 + @r) - @forward['z'] * 0.5 - @velocity['z'] * 2;
 			spawn_particle(@particleLoc, @particle1);
 			spawn_particle(@particleLoc, @particle2);
 			@particleLoc['x'] -= @right['x'] * (1.54 + @r * 2);
@@ -704,8 +704,8 @@ proc _kart_tick(@player, @kart, @race = null) {
 				zoffset: @kart['speed'] / 2,
 				count: 7);
 			@particleLoc = location_shift(@loc, 'up', 0.4);
-			@particleLoc['x'] -= @velocity['x'] + @forward['x'] * 0.5;
-			@particleLoc['z'] -= @velocity['z'] + @forward['z'] * 0.5;
+			@particleLoc['x'] -= @velocity['x'] * 2 + @forward['x'] * 0.5;
+			@particleLoc['z'] -= @velocity['z'] * 2 + @forward['z'] * 0.5;
 			spawn_particle(@particleLoc, @particle);
 			@particleLoc['x'] -= @velocity['x'] / 2;
 			@particleLoc['z'] -= @velocity['z'] / 2;
