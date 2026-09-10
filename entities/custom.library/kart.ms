@@ -123,9 +123,9 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 			brightness: @brightness,
 			teleportduration: @teleportduration,
 			transformation: array(
-				translation: array(x: 0, y: 0.6, z: 0.5),
+				translation: array(x: 0, y: 0.62, z: 0.45),
 				scale: array(x: 0.6, y: 0.6, z: 0.6),
-				leftRotation: array(x: 0.259, y: 0.0, z: 0.0, w: 0.966))));
+				leftRotation: array(x: 0.347, y: 0.0, z: 0.0, w: 0.938))));
 	})[0]);
 	set_entity_rider(@vehicle, spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@steeringcolumn) {
 		set_entity_saves_on_unload(@steeringcolumn, false);
@@ -134,9 +134,9 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 			brightness: @brightness,
 			teleportduration: @teleportduration,
 			transformation: array(
-				translation: array(x: -0.05, y: 0.5, z: 0.45),
-				scale: array(x: 0.1, y: 0.1, z: 0.49),
-				leftRotation: array(x: 0.281, y: 0.0, z: 0.0, w: 0.96))));
+				translation: array(x: -0.05, y: 0.569, z: 0.432),
+				scale: array(x: 0.1, y: 0.1, z: 0.53),
+				leftRotation: array(x: 0.347, y: 0.0, z: 0.0, w: 0.938))));
 	})[0]);
 	set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@frontbumper) {
 		set_entity_saves_on_unload(@frontbumper, false);
