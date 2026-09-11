@@ -94,7 +94,7 @@ proc _race_activate_item(@race, @player, @kart) {
 		case 'CAMPFIRE':
 			if(@kart) {
 				@kart['speed'] *= 1.5;
-				@kart['boost'] = true;
+				@kart['boost'] = array(strength: 2, ticks: 20);
 				set_pexp(@player, 98);
 				@kart['loc']['y'] -= 1;
 				set_entity_spec(@kart['engine'], array(blockdata: @kart['engineBlock'].'[lit=true]'));
@@ -106,7 +106,7 @@ proc _race_activate_item(@race, @player, @kart) {
 
 		case 'CAKE':
 			if(@kart) {
-				@kart['boost'] = true;
+				@kart['boost'] = array(strength: 1, ticks: 40);
 				set_pexp(@player, 98);
 				set_entity_spec(@kart['engine'], array(blockdata: @kart['engineBlock'].'[lit=true]'));
 			} else {

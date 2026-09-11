@@ -51,9 +51,12 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 		explode: false,
 		camdist: @camdist,
 		// previous inputs
-		boost: false,
 		driftTurn: 0,
+		// effects
+		boost: array(strength: 0, ticks: 0),
 	);
+
+	// spawn entities
 	@teleportduration = 2;
 	@brightness = 15;
 	@kart['collider'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@collider) {
@@ -210,9 +213,6 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 	set_entity_loc(puuid(@player), @cameraLoc);
 	set_entity_rider(@kart['camera'], puuid(@player));
 	set_peffect(@player, 'invisibility', 0, 1, true, false, false);
-	set_pexp(@player, 0);
-	try(create_bar(@player.'kart', array(style: 'SEGMENTED_20', percent: 0.0)))
-	bar_add_player(@player.'kart', @player);
 	set_pheld_slot(@player, 8);
 	set_pinv(@player, 8, null);
 	_kart_show_item(@player, @kart);
@@ -228,15 +228,6 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 proc _kart_remove(@player, @kart) {
 	foreach(@bind in @kart['binds']) {
 		unbind(@bind);
-	}
-	if(ponline(@player)) {
-		// double check if they have not switched to new kart
-		@vehicle = pvehicle(@player);
-		if(!@vehicle || @vehicle === @kart['camera'] || entity_type(@vehicle) !== 'BLOCK_DISPLAY') {
-			remove_bar(@player.'kart');
-		}
-	} else {
-		remove_bar(@player.'kart');
 	}
 	foreach(@rider in get_entity_riders(@kart['engine'])) {
 		entity_remove(@rider);
@@ -364,10 +355,10 @@ proc _kart_tick(@player, @kart, @race = null) {
 		}
 
 		// Boost / reset yaw from drift turn
-		if(!@drift && pexp(@player) >= 99 && @acceleration > 0) {
+		if(!@drift && @acceleration > 0 && @kart['boost']['ticks'] > 40 && !@kart['boost']['strength']) {
 			play_sound(@display, array(sound: 'BLOCK_RESPAWN_ANCHOR_DEPLETE', volume: @kart['camdist']));
 			play_sound(@display, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5, volume: @kart['camdist']));
-			@kart['boost'] = true;
+			@kart['boost'] = array(strength: 1, ticks: 20);
 			set_entity_spec(@display, array(blockdata: @engineBlock.'[lit=true]'));
 			@loc['yaw'] -= @kart['driftTurn'] * (@driftAngle / 2);
 		} else if(@kart['driftTurn']) {
@@ -382,21 +373,20 @@ proc _kart_tick(@player, @kart, @race = null) {
 		}
 
 		// Handle velocity and yaw
-		@xp = pexp(@player);
-		if(@kart['boost']) {
-			set_pexp(@player, max(0, @xp - 4));
-			if(@xp <= 0) {
-				@kart['boost'] = false;
+		if(@kart['boost']['strength'] && @kart['boost']['ticks']) {
+			@kart['boost']['ticks']--;
+			if(!@kart['boost']['ticks']) {
+				@kart['boost']['strength'] = 0;
 				set_entity_spec(@display, array(blockdata: @engineBlock.'[lit=false]'));
 			}
 		} else if(@kart['driftTurn'] && @acceleration >= 1) {
-			set_pexp(@player, min(99, @xp + 3));
-		} else if(@xp > 3) {
-			set_pexp(@player, @xp - 4);
+			@kart['boost']['ticks']++;
+		} else if(@kart['boost']['ticks']) {
+			@kart['boost']['ticks']--;
 		}
-		if(@kart['boost']) {
+		if(@kart['boost']['strength']) {
 			if(@kart['speed'] < @maxSpeed) {
-				@kart['speed'] += 0.02 * (@maxSpeed - @kart['speed']);
+				@kart['speed'] += 0.02 * @kart['boost']['strength'] * (@maxSpeed - @kart['speed']);
 			}
 		} else if(@acceleration > 0) {
 			if(@kart['speed'] < 0.75 * @maxSpeed) {
@@ -578,7 +568,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 		// Spawn rubber particles
 		if(@grounded && @drift) {
 			array @boostready = null;
-			if(pexp(@player) >= 99) {
+			if(@kart['boost']['ticks'] > 40 && !@kart['boost']['strength']) {
 				@boostready = array(
 					particle: 'LAVA',
 					count: 1,
@@ -597,7 +587,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 			@particle = array(
 				particle: 'BLOCK_CRACK',
 				block: 'GRAY_CONCRETE_POWDER',
-				count: ceil(@xp / 10),
+				count: ceil(@kart['boost']['ticks'] / 10),
 				xoffset: 0.25,
 				yoffset: 0.0,
 				zoffset: 0.25);
@@ -648,14 +638,14 @@ proc _kart_tick(@player, @kart, @race = null) {
 		}
 
 		// Spawn boost particles
-		if(@kart['boost']) {
+		if(@kart['boost']['strength']) {
 			@particle = array(
 				particle: 'FLAME',
 				speed: 0.03,
 				xoffset: @kart['speed'] / 2,
 				yoffset: 0.1,
 				zoffset: @kart['speed'] / 2,
-				count: 7);
+				count: 7 * @kart['boost']['strength']);
 			@particleLoc = location_shift(@loc, 'up', 0.4);
 			@particleLoc['x'] -= @velocity['x'] * 2 + @forward['x'] * 0.5;
 			@particleLoc['z'] -= @velocity['z'] * 2 + @forward['z'] * 0.5;
@@ -673,14 +663,6 @@ proc _kart_tick(@player, @kart, @race = null) {
 		@trace = ray_trace(@player, @cameraLoc, 2 + @kart['camdist'] + @kart['speed'] + if(@kart['boost'], 1, 0));
 		set_entity_loc(@camera, location_shift(@trace['location'], @cameraLoc, 2, true));
 
-		try {
-			update_bar(@player.'kart', array(
-				percent: clamp(abs(@kart['speed']) / @maxSpeed, 0.0, 1.0),
-				color: if(@kart['speed'] > 1.0, 'RED', if(@kart['speed'] > 0.7975 * @maxSpeed, 'YELLOW', 'WHITE'))));
-		} catch(NotFoundException @ex) {
-			create_bar(@player.'kart', array(style: 'SEGMENTED_20', percent: 0.0));
-			bar_add_player(@player.'kart', @player);
-		}
 		if(@race) {
 			// Check movement on course
 			_race_on_move(@player, @loc, @race);
@@ -692,8 +674,6 @@ proc _kart_show_item(@player, @kart) {
 	@item = pinv(@player, 0);
 	set_entity_spec(@kart['item'], array(item: @item));
 	if(@item && @item['meta']) {
-		update_bar(@player.'kart', color('bold').@item['meta']['display'].' [SPACE]');
-	} else {
-		update_bar(@player.'kart', '');
+		action_msg(@player, color('bold').@item['meta']['display'].' [SPACE]');
 	}
 }
