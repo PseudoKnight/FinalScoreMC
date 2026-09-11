@@ -69,8 +69,10 @@ proc _race_create(@id) {
 
 	// scoreboard
 	create_scoreboard(@id);
-	create_objective('time', 'DUMMY', @id);
-	set_objective_display('time', array(displayname: to_upper(@id).' RACE', slot: 'SIDEBAR'), @id);
+	create_objective('checkpoints', 'DUMMY', @id);
+	set_objective_display('checkpoints', array(
+		displayname: to_upper(@id).' RACE ('.(@race['laps'] * array_size(@race['checkpoint'])).')',
+		slot: 'SIDEBAR'), @id);
 	create_team('collision', @id);
 	set_team_options('collision', array(collisionrule: 'NEVER', friendlyinvisibles: false), @id);
 
@@ -81,7 +83,7 @@ proc _race_countdown(@race) {
 	if(@race['state'] !== 'queued') {
 		return();
 	}
-	@race['state'] = 'countdown';
+	@race['state'] = 'loading'; // load chunks
 
 	_add_activity('race'.@race['id'], 'Race: '._to_upper_camel_case(@race['id']));
 
@@ -89,13 +91,20 @@ proc _race_countdown(@race) {
 	foreach(@p: @v in @race['players']) {
 		if(ponline(@p)) {
 			bar_add_player('race'.@race['id'], @p);
+			if(distance(ploc(@p), @race['spawn'][0]) > 96) {
+				set_entity_loc(puuid(@p), array_get_rand(@race['spawn']));
+			}
 		} else {
 			array_remove(@race['players'], @p);
 		}
 	}
 
-	_race_place_players(@race);
-	_race_bind_events(@race);
+	set_timeout(500, closure(){
+		@race['state'] = 'countdown';
+		_race_place_players(@race);
+		_race_bind_events(@race);
+	});
+
 	@startTime = 6;
 	@timer = array(@startTime);
 	set_interval(1000, closure(){
@@ -138,6 +147,7 @@ proc _race_on_move(@player, @to, @race) {
 		&& @loc['y'] < @p1[1] && @loc['y'] > @p2[1]
 		&& @loc['z'] < @p1[2] && @loc['z'] > @p2[2]) {
 			// hit checkpoint
+			set_pscore('checkpoints', @player, get_pscore('checkpoints', @player, @race['id']) + 1, @race['id']);
 			@p['checkpointLoc'] = @loc[];
 			if(@race['type'] === 'kart') {
 				if(array_size(@checkpoint) == 3) {
@@ -205,10 +215,9 @@ proc _race_on_move(@player, @to, @race) {
 			@lap = @p['lap'];
 			if(!array_index_exists(@race['times'], @lap)
 			|| !array_index_exists(@race['times'][@lap], @checkpointNum)) {
-				@race['times'][@lap][@checkpointNum] = integer(time() / 1000);
-				set_pscore('time', @player, 0, @race['id']);
+				@race['times'][@lap][@checkpointNum] = time();
 			} else {
-				set_pscore('time', @player, @race['times'][@lap][@checkpointNum] - integer(time() / 1000), @race['id']);
+				title(@player, '', '+'.round(@race['times'][@lap][@checkpointNum] - time(), 1).'s');
 			}
 		} else if(sk_region_contains(@race['region'], @loc)) {
 			// ensure they are still in a vehicle in vehicle races
@@ -322,7 +331,7 @@ proc _race_check_players(@race) {
 proc _race_end(@race) {
 	if(!@race) {
 		die(color('gold').'That race isn\'t running.')
-	} else if(@race['state'] === 'ending' || @race['state'] === 'countdown') {
+	} else if(@race['state'] === 'ending' || @race['state'] === 'countdown' || @race['state'] === 'loading') {
 		return();
 	}
 	@race['state'] = 'ending';

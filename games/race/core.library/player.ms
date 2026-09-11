@@ -16,7 +16,7 @@ proc _race_add_player(@id, @player) {
 	);
 	set_pmode(@player, 'ADVENTURE');
 	set_pscoreboard(@player, @id);
-	set_pscore('time', @player, 0, @id);
+	set_pscore('checkpoints', @player, 0, @id);
 	team_add_player('collision', @player, @id);
 }
 
