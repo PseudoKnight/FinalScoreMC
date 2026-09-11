@@ -28,11 +28,22 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 		// entity UUIDs
 		collider: null,
 		engine: null,
-		camera: null,
-		leftTire: null,
-		rightTire: null,
-		head: null,
+		frame: null,
+		frontBumper: null,
+		backBumper: null,
+		frontAxle: null,
+		backAxle: null,
+		frontLeftTire: null,
+		frontRightTire: null,
+		backLeftTire: null,
+		backRightTire: null,
+		steeringColumn: null,
+		steeringWheel: null,
 		item: null,
+		stand: null,
+		mannequin: null,
+		head: null,
+		camera: null,
 		// status
 		loc: location_shift(@loc, 'up', 0),
 		lastVelocity: array(x: 0, y: 0, z: 0, magnitude: 0.0),
@@ -45,14 +56,13 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 	);
 	@teleportduration = 2;
 	@brightness = 15;
-	@collider = spawn_entity('ARMOR_STAND', 1, @loc, closure(@collider) {
+	@kart['collider'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@collider) {
 		set_entity_saves_on_unload(@collider, false);
 		set_entity_attribute_base(@collider, 'GENERIC_STEP_HEIGHT', 0.5);
 		set_entity_spec(@collider, array(visible: false));
 		set_entity_size(@collider, 1.5, 1.5);
 		add_scoreboard_tag(@collider, 'kart_collider');
 	})[0];
-	@kart['collider'] = @collider;
 	@vehicle = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@engineDisplay) {
 		set_entity_saves_on_unload(@engineDisplay, false);
 		set_entity_spec(@engineDisplay, array(blockdata: @engineBlock));
@@ -65,34 +75,92 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 				scale: array(x: 0.78, y: 0.48, z: 0.34))));
 	})[0];
 	@kart['engine'] = @vehicle;
-	set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@engine) {
-		set_entity_saves_on_unload(@engine, false);
-		set_entity_spec(@engine, array(item: array(name: @color.'_SHULKER_BOX')));
-		set_display_entity(@engine, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: 0, y: 0.18, z: 0.275),
-				scale: array(x: 0.9, y: 0.15, z: 1.85))));
-	})[0]);
-	@stand = spawn_entity('ARMOR_STAND', 1, @loc, closure(@stand) {
+
+	@parts = array(
+		frame: array(
+			item: @color.'_SHULKER_BOX',
+			translation: array(x: 0, y: 0.18, z: 0.275),
+			scale: array(x: 0.9, y: 0.15, z: 1.85)),
+		frontBumper: array(
+			item: @color.'_SHULKER_BOX',
+			translation: array(x: 0, y: 0.2, z: 1.275),
+			scale: array(x: 1.44, y: 0.2, z: 0.15)),
+		backBumper: array(
+			item: @color.'_SHULKER_BOX',
+			translation: array(x: 0, y: 0.2, z: -0.725),
+			scale: array(x: 1.74, y: 0.2, z: 0.15)),
+		frontAxle: array(
+			block: 'GRAY_CONCRETE_POWDER',
+			translation: array(x: -0.88, y: 0.2, z: 0.8),
+			scale: array(x: 1.74, y: 0.1, z: 0.1)),
+		backAxle: array(
+			block: 'GRAY_CONCRETE_POWDER',
+			translation: array(x: -0.92, y: 0.2, z: -0.4),
+			scale: array(x: 1.84, y: 0.1, z: 0.1)),
+		frontLeftTire: array(
+			item: @wheels,
+			translation: array(x: -0.72, y: 0.25, z: 0.85),
+			scale: array(x: 0.2, y: 0.5, z: 0.5)),
+		frontRightTire: array(
+			item: @wheels,
+			translation: array(x: 0.72, y: 0.25, z: 0.85),
+			scale: array(x: 0.2, y: 0.5, z: 0.5)),
+		backLeftTire: array(
+			block: @wheels,
+			translation: array(x: -0.87, y: 0.0, z: -0.6),
+			scale: array(x: 0.25, y: 0.5, z: 0.5)),
+		backRightTire: array(
+			block: @wheels,
+			translation: array(x: 0.62, y: 0.0, z: -0.6),
+			scale: array(x: 0.25, y: 0.5, z: 0.5)),
+		steeringColumn: array(
+			block: 'GRAY_CONCRETE_POWDER',
+			translation: array(x: -0.05, y: 0.569, z: 0.432),
+			scale: array(x: 0.1, y: 0.1, z: 0.53),
+			leftRotation: array(x: 0.347, y: 0.0, z: 0.0, w: 0.938)),
+		steeringWheel: array(
+			item: 'STRUCTURE_VOID',
+			translation: array(x: 0, y: 0.62, z: 0.45),
+			scale: array(x: 0.6, y: 0.6, z: 0.6),
+			leftRotation: array(x: 0.347, y: 0.0, z: 0.0, w: 0.938)),
+		item: array(
+			item: 'AIR',
+			translation: array(x: -0.7, y: 1.2, z: 0.0),
+			scale: array(x: 0.9, y: 0.9, z: 0.9)),
+	);
+	foreach(@id: @data in @parts) {
+		@type = if(array_index_exists(@data, 'item'), 'ITEM', 'BLOCK').'_DISPLAY';
+		@kart[@id] = spawn_entity(@type, 1, @loc, closure(@entity){
+			if(array_index_exists(@data, 'item')) {
+				set_entity_spec(@entity, array(item: array(name: @data['item'])));
+			} else {
+				set_entity_spec(@entity, array(blockdata: @data['block']));
+			}
+			set_display_entity(@entity, array(
+				brightness: @brightness,
+				teleportduration: @teleportduration,
+				transformation: @data,
+			));
+			set_entity_saves_on_unload(@entity, false);
+		})[0];
+		set_entity_rider(@vehicle, @kart[@id]);
+	}
+
+	// Rider
+	@kart['stand'] = spawn_entity('ARMOR_STAND', 1, @loc, closure(@stand) {
 		set_entity_saves_on_unload(@stand, false);
+		set_entity_invulnerable(@stand, true);
 		set_entity_attribute_base(@stand, 'GENERIC_SCALE', 0.3);
-		set_entity_spec(@stand, array(
-			smalL: true,
-			visible: false));
+		set_entity_spec(@stand, array(smalL: true, visible: false));
 	})[0];
-	@mannequin = spawn_entity('MANNEQUIN', 1, @loc, closure(@mannequin) {
+	@kart['mannequin'] = spawn_entity('MANNEQUIN', 1, @loc, closure(@mannequin) {
 		set_entity_saves_on_unload(@mannequin, false);
 		set_entity_attribute_base(@mannequin, 'GENERIC_SCALE', 0.8);
 	})[0];
-	runas('~console', '/data modify entity '.@mannequin.' profile set value '.@player);
-	@kart['stand'] = @stand;
-	@kart['mannequin'] = @mannequin;
-	set_entity_rider(@stand, @mannequin);
-	set_entity_rider(@vehicle, @stand);
-	set_entity_invulnerable(@stand, true);
-	@head = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@head) {
+	runas('~console', '/data modify entity '.@kart['mannequin'].' profile set value '.@player);
+	set_entity_rider(@kart['stand'], @kart['mannequin']);
+	set_entity_rider(@vehicle, @kart['stand']);
+	@kart['head'] = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@head) {
 		set_entity_saves_on_unload(@head, false);
 		set_entity_spec(@head, array(item: array(name: 'PLAYER_HEAD', meta: array(owner: @player))));
 		set_display_entity(@head, array(
@@ -103,127 +171,9 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 				scale: array(x: 1.2, y: 1.2, z: 1.2),
 				leftRotation: array(x: 0.0, y: 1.0, z: 0.0, w: 0.0))));
 	})[0];
-	@kart['head'] = @head;
-	set_entity_rider(@mannequin, @head);
-	@item = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@item) {
-		set_entity_saves_on_unload(@item, false);
-		set_display_entity(@item, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: -0.6, y: 1.2, z: 0.0),
-				scale: array(x: 1, y: 1, z: 1))));
-	})[0];
-	@kart['item'] = @item;
-	set_entity_rider(@vehicle, @item);
-	set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@steeringwheel) {
-		set_entity_saves_on_unload(@steeringwheel, false);
-		set_entity_spec(@steeringwheel, array(item: array(name: 'STRUCTURE_VOID')));
-		set_display_entity(@steeringwheel, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: 0, y: 0.62, z: 0.45),
-				scale: array(x: 0.6, y: 0.6, z: 0.6),
-				leftRotation: array(x: 0.347, y: 0.0, z: 0.0, w: 0.938))));
-	})[0]);
-	set_entity_rider(@vehicle, spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@steeringcolumn) {
-		set_entity_saves_on_unload(@steeringcolumn, false);
-		set_entity_spec(@steeringcolumn, array(blockdata: 'gray_concrete_powder'));
-		set_display_entity(@steeringcolumn, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: -0.05, y: 0.569, z: 0.432),
-				scale: array(x: 0.1, y: 0.1, z: 0.53),
-				leftRotation: array(x: 0.347, y: 0.0, z: 0.0, w: 0.938))));
-	})[0]);
-	set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@frontbumper) {
-		set_entity_saves_on_unload(@frontbumper, false);
-		set_entity_spec(@frontbumper, array(item: array(name: @color.'_SHULKER_BOX')));
-		set_display_entity(@frontbumper, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: 0, y: 0.2, z: 1.275),
-				scale: array(x: 1.44, y: 0.2, z: 0.15))));
-	})[0]);
-	set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@backbumper) {
-		set_entity_saves_on_unload(@backbumper, false);
-		set_entity_spec(@backbumper, array(item: array(name: @color.'_SHULKER_BOX')));
-		set_display_entity(@backbumper, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: 0, y: 0.2, z: -0.725),
-				scale: array(x: 1.74, y: 0.2, z: 0.15))));
-	})[0]);
-	set_entity_rider(@vehicle, spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@frontaxle) {
-		set_entity_saves_on_unload(@frontaxle, false);
-		set_entity_spec(@frontaxle, array(blockdata: 'gray_concrete_powder'));
-		set_display_entity(@frontaxle, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: -0.88, y: 0.2, z: 0.8),
-				scale: array(x: 1.74, y: 0.1, z: 0.1))));
-	})[0]);
-	@frontrighttire = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@frontrighttire) {
-		set_entity_saves_on_unload(@frontrighttire, false);
-		set_entity_spec(@frontrighttire, array(item: array(name: @wheels)));
-		set_display_entity(@frontrighttire, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: 0.72, y: 0.25, z: 0.85),
-				scale: array(x: 0.2, y: 0.5, z: 0.5))));
-	})[0];
-	@kart['rightTire'] = @frontrighttire;
-	set_entity_rider(@vehicle, @frontrighttire);
-	@frontlefttire = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@frontlefttire) {
-		set_entity_saves_on_unload(@frontlefttire, false);
-		set_entity_spec(@frontlefttire, array(item: array(name: @wheels)));
-		set_display_entity(@frontlefttire, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: -0.72, y: 0.25, z: 0.85),
-				scale: array(x: 0.2, y: 0.5, z: 0.5))));
-	})[0];
-	@kart['leftTire'] = @frontlefttire;
-	set_entity_rider(@vehicle, @frontlefttire);
-	set_entity_rider(@vehicle, spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@backaxle) {
-		set_entity_saves_on_unload(@backaxle, false);
-		set_entity_spec(@backaxle, array(blockdata: 'gray_concrete_powder'));
-		set_display_entity(@backaxle, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: -0.92, y: 0.2, z: -0.4),
-				scale: array(x: 1.84, y: 0.1, z: 0.1))));
-	})[0]);
-	@kart['backRightTire'] = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@backrighttire) {
-		set_entity_saves_on_unload(@backrighttire, false);
-		set_entity_spec(@backrighttire, array(blockdata: @wheels));
-		set_display_entity(@backrighttire, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: 0.62, y: 0.0, z: -0.6),
-				scale: array(x: 0.25, y: 0.5, z: 0.5))));
-	})[0];
-	set_entity_rider(@vehicle, @kart['backRightTire']);
-	@kart['backLeftTire'] = spawn_entity('BLOCK_DISPLAY', 1, @loc, closure(@backlefttire) {
-		set_entity_saves_on_unload(@backlefttire, false);
-		set_entity_spec(@backlefttire, array(blockdata: @wheels));
-		set_display_entity(@backlefttire, array(
-			brightness: @brightness,
-			teleportduration: @teleportduration,
-			transformation: array(
-				translation: array(x: -0.87, y: 0.0, z: -0.6),
-				scale: array(x: 0.25, y: 0.5, z: 0.5))));
-	})[0];
-	set_entity_rider(@vehicle, @kart['backLeftTire']);
+	set_entity_rider(@kart['mannequin'], @kart['head']);
+
+	// Flag
 	// set_entity_rider(@vehicle, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@flagpole) {
 	// 	set_entity_spec(@flagpole, array(item: array(name: 'LIGHT_GRAY_CONCRETE_POWDER')));
 	// 	set_display_entity(@flagpole, array(
@@ -244,6 +194,7 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 	// 			scale: array(x: 0.03, y: 0.3, z: 0.3),
 	// 			leftRotation: array(x: -0.1, y: 0.0, z: 0.0, w: 0.978))));
 	// })[0]);
+
 	@v = get_vector(@loc, @camdist);
 	@cameraLoc = @loc[];
 	@cameraLoc['x'] = @cameraLoc[0] - @v['x'];
@@ -263,6 +214,7 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 	try(create_bar(@player.'kart', array(style: 'SEGMENTED_20', percent: 0.0)))
 	bar_add_player(@player.'kart', @player);
 	set_pheld_slot(@player, 8);
+	set_pinv(@player, 8, null);
 	_kart_show_item(@player, @kart);
 	@kart['binds'][] = bind('item_held', null, array(player: @player), @event) {
 		cancel();
@@ -293,8 +245,8 @@ proc _kart_remove(@player, @kart) {
 	entity_remove(@kart['camera']);
 	entity_remove(@kart['head']);
 	entity_remove(@kart['mannequin']);
-	try(entity_remove(@kart['stand']))
-	try(entity_remove(@kart['collider']))
+	try(entity_remove(@kart['stand'])) // may no longer be a rider
+	try(entity_remove(@kart['collider'])) // may be destroyed
 }
 
 /**
@@ -307,8 +259,9 @@ proc _kart_tick(@player, @kart, @race = null) {
 
 	@display = @kart['engine'];
 	@collider = @kart['collider'];
-	@leftTire = @kart['leftTire'];
-	@rightTire = @kart['rightTire'];
+	@engineBlock = @kart['engineBlock'];
+	@leftTire = @kart['frontLeftTire'];
+	@rightTire = @kart['frontRightTire'];
 	@backLeftTire = @kart['backLeftTire'];
 	@backRightTire = @kart['backRightTire'];
 	@head = @kart['head'];
@@ -415,7 +368,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 			play_sound(@display, array(sound: 'BLOCK_RESPAWN_ANCHOR_DEPLETE', volume: @kart['camdist']));
 			play_sound(@display, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5, volume: @kart['camdist']));
 			@kart['boost'] = true;
-			set_entity_spec(@display, array(blockdata: @kart['engineBlock'].'[lit=true]'));
+			set_entity_spec(@display, array(blockdata: @engineBlock.'[lit=true]'));
 			@loc['yaw'] -= @kart['driftTurn'] * (@driftAngle / 2);
 		} else if(@kart['driftTurn']) {
 			@loc['yaw'] -= @kart['driftTurn'] * @driftAngle;
@@ -434,7 +387,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 			set_pexp(@player, max(0, @xp - 4));
 			if(@xp <= 0) {
 				@kart['boost'] = false;
-				set_entity_spec(@display, array(blockdata: @kart['engineBlock'].'[lit=false]'));
+				set_entity_spec(@display, array(blockdata: @engineBlock.'[lit=false]'));
 			}
 		} else if(@kart['driftTurn'] && @acceleration >= 1) {
 			set_pexp(@player, min(99, @xp + 3));
