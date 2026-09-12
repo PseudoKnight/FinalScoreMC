@@ -235,7 +235,7 @@ proc _race_on_move(@player, @to, @race) {
 				});
 			}
 			if(array_index_exists(@race, 'itemspawn') && @p['itemCooldown'] <= 0) {
-				for(@i = 0, @i < array_size(@race['itemspawn']), @i++) {
+				for(@i = 0, @i < array_size(@race['items']), @i++) {
 					if(distance(@loc, @race['itemspawn'][@i]) < 1.5) {
 						@itemDisplay = @race['items'][@i];
 						set_display_entity(@itemDisplay, array(brightness: 0));
