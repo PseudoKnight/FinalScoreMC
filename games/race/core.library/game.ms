@@ -217,7 +217,7 @@ proc _race_on_move(@player, @to, @race) {
 			|| !array_index_exists(@race['times'][@lap], @checkpointNum)) {
 				@race['times'][@lap][@checkpointNum] = time();
 			} else {
-				title(@player, '', '+'.round(@race['times'][@lap][@checkpointNum] - time(), 1).'s');
+				title(@player, '', '+'.round((time() - @race['times'][@lap][@checkpointNum]) / 1000, 1).'s');
 			}
 		} else if(sk_region_contains(@race['region'], @loc)) {
 			// ensure they are still in a vehicle in vehicle races
