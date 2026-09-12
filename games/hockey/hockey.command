@@ -106,7 +106,7 @@ register_command('hockey', array(
 			@region = sk_region_info('hockey', @world, 0);
 			@hockey['loc'] = array(
 				x: (@region[0][0] + @region[1][0]) / 2 + 0.5,
-				y: @region[1][1] + 0.078,
+				y: @region[1][1],
 				z: (@region[0][2] + @region[1][2]) / 2 + 0.5,
 				world: @world
 			);
@@ -165,7 +165,7 @@ register_command('hockey', array(
 				@hockey['last'] = player();
 				@hockey['distance'] = @dist;
 				@hockey['velocity'] = array(x: 0, y: 0, z: 0);
-				@hockey['lastloc'] = entity_loc(@hockey['puck']);
+				@hockey['lastloc'] = @eloc;
 				set_pexp(0);
 				play_sound(@eloc, array(sound: 'BLOCK_WOODEN_BUTTON_CLICK_ON', pitch: 0.6));
 			}
@@ -266,6 +266,8 @@ register_command('hockey', array(
 						@newloc['x'] += @vector['x'];
 						@newloc['y'] += 1;
 						@newloc['z'] += @vector['z'];
+						@newloc['yaw'] = 0;
+						@newloc['pitch'] = 0;
 						set_entity_loc(@hockey['puck'], @newloc);
 						@hockey['lastloc'] = @l;
 					}
@@ -331,7 +333,7 @@ register_command('hockey', array(
 					set_display_entity(@e, array(
 						teleportduration: 0,
 						transformation: array(
-							translation: array(x: -0.25, y: -1.96875, z: -0.25),
+							translation: array(x: -0.25, y: -2, z: -0.25),
 							scale: array(x: 0.5, y: 0.2, z: 0.5))));
 				})[0]);
 			} else {
