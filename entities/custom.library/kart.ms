@@ -229,6 +229,9 @@ proc _kart_remove(@player, @kart) {
 	foreach(@bind in @kart['binds']) {
 		unbind(@bind);
 	}
+	if(!entity_exists(@kart['engine'])) {
+		return(); // already removed
+	}
 	foreach(@rider in get_entity_riders(@kart['engine'])) {
 		entity_remove(@rider);
 	}
