@@ -76,9 +76,11 @@ register_command('track', array(
 					// multiple items
 					case 'item':
 						if(!array_index_exists(@track, @setting)) {
-							@track[@setting] = array();
+							@track[@setting] = associative_array();
 						}
-						@track[@setting][] = pinv(player(), null);
+						@item = pinv(player(), null);
+						@id = @item['name'];
+						@track[@setting][@id] = @item['meta'];
 						msg(colorize("&7[Track]&r Added item to @setting list"));
 
 					// selection with optional integer

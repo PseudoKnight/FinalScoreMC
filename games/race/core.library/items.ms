@@ -51,8 +51,8 @@ proc _race_spawn_items(@race) {
 						}
 					}
 					if(@displayBrightness >= 15) {
-						@type = array_get_rand(@race['item']);
-						set_entity_spec(@itemDisplay, array(item: @type));
+						@type = array_get_rand(array_keys(@race['item']));
+						set_entity_spec(@itemDisplay, array(item: array(name: @type, meta: @race['item'][@type])));
 						@loc = entity_loc(@itemDisplay);
 						set_entity_rotation(@itemDisplay, @loc['yaw'] + 25);
 						set_entity_rotation(get_entity_rider(@itemDisplay), -@loc['yaw']);
