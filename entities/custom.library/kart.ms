@@ -309,7 +309,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 			}
 			set_timeout(@animationDurationTicks * 50, closure(){
 				_kart_remove(@player, @kart);
-				if(@race) {
+				if(@race && array_index_exists(@race['players'], @player)) {
 					_race_on_move(@player, @loc, @race);
 				}
 			});
