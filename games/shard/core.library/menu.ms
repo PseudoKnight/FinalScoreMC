@@ -18,7 +18,7 @@ proc _open_objective_menu() {
 					color('white').'First player or team to claim a third treasure wins.'
 		))),
 		array(
-			name: 'MAP', meta: array(
+			name: 'KNOWLEDGE_BOOK', meta: array(
 				display: color('aqua').'Scavenger Hunt / BINGO',
 				lore: array(
 					color('white').'Find and collect items to complete your BINGO card.',

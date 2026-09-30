@@ -1542,7 +1542,7 @@ proc _objective_load(@binds, @rules) {
 				create_team(player(), 'shard');
 				team_add_player(player(), player(), 'shard');
 				set_team_display(player(), array(color: @colorMap[player()][1]), 'shard');
-				pgive_item(player(), array(name: 'MAP', meta: array(display: 'Scavenger Hunt Card')));
+				pgive_item(player(), array(name: 'KNOWLEDGE_BOOK', meta: array(display: color('white').'Scavenger Hunt Book')));
 				if(@size) {
 					_refresh_card();
 				}
@@ -1553,7 +1553,7 @@ proc _objective_load(@binds, @rules) {
 	}
 
 	@binds[] = 'shard-scavenger-playerinteract';
-	bind('player_interact', array(id: 'shard-scavenger-playerinteract'), array(itemname: 'MAP', button: 'right'), @event, @size) {
+	bind('player_interact', array(id: 'shard-scavenger-playerinteract'), array(itemname: 'KNOWLEDGE_BOOK', button: 'right'), @event, @size) {
 		if(pworld() == 'shard') {
 			cancel();
 			if(@size) {
@@ -1658,8 +1658,8 @@ proc _objective_load(@binds, @rules) {
 			@thisMaterial = @event['item']['name'];
 			if(string_ends_with(@thisMaterial, '_STAINED_GLASS_PANE')) {
 				die();
-			} else if(@thisMaterial == 'MAP') {
-				modify_event('item', array(name: 'MAP', meta: array(display: 'Scavenger Hunt Card')));
+			} else if(@thisMaterial == 'KNOWLEDGE_BOOK') {
+				modify_event('item', array(name: 'KNOWLEDGE_BOOK', meta: array(display: color('white').'Scavenger Hunt Book')));
 				die();
 			}
 			@thisQty = @event['item']['qty'];
