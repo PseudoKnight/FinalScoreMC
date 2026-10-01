@@ -25,7 +25,7 @@ register_command('text', array(
 		if(array_size(@args) > 1) {
 			@value = @args[1];
 		}
-		@display = import(player().'textdisplay');
+		@display = import("@player.entity.selected");
 		if(!@display && @action !== 'create' && @action !== 'select') {
 			die('Must first create or select a text display.');
 		}
@@ -81,7 +81,7 @@ register_command('text', array(
 						@text = replace(@text, '\\n', '\n');
 					}
 					set_entity_spec(@display, array(text: colorize(@text)));
-					export(player().'textdisplay', @display);
+					export("@player.entity.selected", @display);
 					msg('Created and selected text display for modification.');
 				} else if(@action === 'copy') {
 					@specData = entity_spec(@display);
@@ -89,13 +89,13 @@ register_command('text', array(
 					@display = spawn_entity('TEXT_DISPLAY', 1, @loc)[0];
 					set_entity_spec(@display, @specData);
 					set_display_entity(@display, @displayData);
-					export(player().'textdisplay', @display);
+					export("@player.entity.selected", @display);
 					msg('Copied text display and selected copy.');
 				} else {
 					set_entity_loc(@display, @loc);
 				}
 			case 'select':
-				@displays = select_entities('@e[type=text_display,limit=1,sort=nearest]');
+				@displays = select_entities('@n[type=text_display]');
 				if(!@displays) {
 					die('Must be near a text display.');
 				}
@@ -103,7 +103,7 @@ register_command('text', array(
 				if(!sk_can_build(entity_loc(@display))) {
 					die(color('red').'Cannot build there.');
 				}
-				export(player().'textdisplay', @display);
+				export("@player.entity.selected", @display);
 				@loc = entity_loc(@display);
 				@opacity = entity_spec(@display)['opacity'];
 				set_entity_spec(@display, array(opacity: integer(@opacity / 2)));
@@ -196,8 +196,8 @@ register_command('text', array(
 				}
 			case 'delete':
 				entity_remove(@display);
-				export(player().'textdisplay', null);
-				msg('Deleted text display.');
+				export("@player.entity.selected", null);
+				msg('Deleted display entity.');
 			default:
 				return(false);
 		}
