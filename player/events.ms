@@ -288,8 +288,9 @@ bind('player_toggle_sneak', null, array(sneaking: true), @event, @instruments) {
 bind('entity_damage_player', null, null, @event) {
 	if(!is_array(@event['data']) # is not dispenser
 	&& _is_survival_world(@event['location']['world'])) {
-		if(@event['damager'] == 'WOLF') {
+		if(@event['damager'] === 'WOLF') {
 			if(get_mob_owner_uuid(@event['id'])) { # tamed wolves count as pvp
+				set_mob_target(@event['id'], null);
 				cancel();
 			}
 		} else if(ponline(@event['data']) && @event['data'] != @event['player']) { # not self-inflicted
