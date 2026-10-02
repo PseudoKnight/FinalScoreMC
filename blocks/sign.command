@@ -3,7 +3,7 @@ register_command('sign', array(
 	usage: '/sign [side] [line#] <text>\n/sign [side] glow>\n/sign <woodtype>\n/sign wax',
 	permission: 'command.sign',
 	tabcompleter: _create_tabcompleter(
-		array('front', 'back', 'glow', 'wax', 'acacia', 'bamboo', 'birch', 'cherry', 'crimson', 'dark_oak', 'jungle', 'mangrove', 'oak', 'spruce', 'warped', 'pale_oak', '1', '2', '3', '4'),
+		array('front', 'back', 'glow', 'wax', 'acacia', 'bamboo', 'birch', 'cherry', 'crimson', 'dark_oak', 'jungle', 'mangrove', 'oak', 'spruce', 'warped', 'pale_oak', 'poplar', '1', '2', '3', '4'),
 		array('<front|back': array('glow', '1', '2', '3', '4')),
 	),
 	executor: closure(@alias, @sender, @args, @info) {
@@ -26,7 +26,7 @@ register_command('sign', array(
 			}
 
 			// change sign material
-			 if(array_contains_ic(array('acacia', 'bamboo', 'birch', 'cherry', 'crimson', 'dark_oak', 'jungle', 'mangrove', 'oak', 'spruce', 'warped', 'pale_oak'), @args[0])) {
+			 if(array_contains_ic(array('acacia', 'bamboo', 'birch', 'cherry', 'crimson', 'dark_oak', 'jungle', 'mangrove', 'oak', 'spruce', 'warped', 'pale_oak', 'poplar'), @args[0])) {
 				@linesFront = get_sign_text(@sign, 'FRONT');
 				@linesBack = get_sign_text(@sign, 'BACK');
 				@glowingFront = is_sign_text_glowing(@sign, 'FRONT');

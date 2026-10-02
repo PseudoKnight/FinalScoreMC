@@ -15,7 +15,7 @@ register_command('boats', array(
 		@type = to_upper(@args[0]);
 		if(@type === 'RANDOM') {
 			@type = array_get_rand(array('ACACIA', 'BIRCH', 'CHERRY', 'DARK_OAK', 'JUNGLE',
-					'MANGROVE', 'OAK', 'PALE_OAK', 'SPRUCE'));
+					'MANGROVE', 'OAK', 'PALE_OAK', 'POPLAR', 'SPRUCE'));
 		}
 		if(@args[1] === 'tower') {
 			@target = get_command_block();

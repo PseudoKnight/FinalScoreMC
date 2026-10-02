@@ -38,14 +38,14 @@ register_command('dye', array(
 			} catch(Exception @ex) {
 				die(color('gold').'This leather item cannot be dyed.');
 			}
-		} else if(@item['name'] == 'FILLED_MAP' || string_ends_with(@item['name'], 'POTION')) {
+		} else if(string_ends_with(@item['name'], 'POTION')) {
 			if(!@item['meta']) {
 				@item['meta'] = associative_array();
 			}
 			@item['meta']['color'] = @color;
 			set_pinv(player(), null, @item);
 		} else {
-			die(color('gold').'You must be holding a map, potion, or leather armor in your hand.');
+			die(color('gold').'You must be holding a potion or leather armor in your hand.');
 		}
 	}
 ));
