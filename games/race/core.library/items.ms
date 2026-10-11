@@ -24,7 +24,7 @@ proc _race_spawn_items(@race) {
 								translation: array(x: 0, y: 0.6, z: 0),
 								scale: array(x: 0.8, y: 0.8, z: 0.8))));
 					})[0];
-					@container = spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@container){
+					set_entity_rider(@item, spawn_entity('ITEM_DISPLAY', 1, @loc, closure(@container){
 						set_entity_saves_on_unload(@container, false);
 						set_entity_spec(@container, array(item: array(name: 'GLASS')));
 						set_display_entity(@container, array(
@@ -34,20 +34,20 @@ proc _race_spawn_items(@race) {
 								translation: array(x: 0, y: 0.6, z: 0),
 								scale: array(x: 1.2, y: 1.2, z: 1.2),
 								leftRotation: array(x: 0.354, y: -0.146, z: 0.354, w: 0.854))));
-					})[0];
-					set_entity_rider(@item, @container);
+					})[0]);
 					@race['items'][@i] = @item;
 				} else if(!entity_exists(@itemDisplay)) {
 					@race['items'][@i] = null;
 				} else {
 					// display brightness used for respawn countdown (interval duration * 15 levels)
 					@displayBrightness = get_display_entity(@itemDisplay)['brightness']['sky'];
+					@container = get_entity_rider(@itemDisplay);
 					if(@displayBrightness < 15) {
 						@displayBrightness++;
 						set_display_entity(@itemDisplay, array(brightness: @displayBrightness));
 						if(@displayBrightness >= 15) {
-							set_entity_spec(get_entity_rider(@itemDisplay), array(item: array(name: 'GLASS')));
-							set_display_entity(get_entity_rider(@itemDisplay), array(transformation: array(scale: array(x: 1.2, y: 1.2, z: 1.2))));
+							set_entity_spec(@container, array(item: array(name: 'GLASS')));
+							set_display_entity(@container, array(transformation: array(scale: array(x: 1.2, y: 1.2, z: 1.2))));
 						}
 					}
 					if(@displayBrightness >= 15) {
@@ -55,7 +55,7 @@ proc _race_spawn_items(@race) {
 						set_entity_spec(@itemDisplay, array(item: array(name: @type, meta: @race['item'][@type])));
 						@loc = entity_loc(@itemDisplay);
 						set_entity_rotation(@itemDisplay, @loc['yaw'] + 25);
-						set_entity_rotation(get_entity_rider(@itemDisplay), -@loc['yaw']);
+						set_entity_rotation(@container, -@loc['yaw']);
 						spawn_particle(location_shift(@loc, 'up', 0.6), array(
 							particle: 'END_ROD',
 							count: 1,
@@ -75,48 +75,80 @@ proc _race_activate_item(@race, @player, @kart) {
 	if(!@item) {
 		return();
 	}
-	@p = @race['players'][@player];
-	if(@p['itemCooldown'] > 0) {
+	if(@race['players'][@player]['itemCooldown'] > 0) {
 		return();
 	}
-	@target = puuid(@player);
+	@racer = puuid(@player);
 	if(@kart) {
-		@target = @kart['collider'];
+		@racer = @kart['collider'];
+	} else if(pvehicle(@racer)) {
+		@racer = pvehicle(@racer);
 	}
 
 	switch(@item['name']) {
 		case 'BIG_DRIPLEAF':
-			@v = entity_velocity(@target);
+			@v = entity_velocity(@racer);
 			@v['y'] = 1.5;
-			set_entity_velocity(@target, @v);
-			play_sound(@target, array(sound: 'BLOCK_PISTON_EXTEND', volume: @kart['camdist']));
+			set_entity_velocity(@racer, @v);
+			play_sound(@racer, array(sound: 'BLOCK_PISTON_EXTEND', volume: @kart['camdist']));
 
 		case 'CAMPFIRE':
 			if(@kart) {
 				@kart['speed'] *= 1.5;
 				@kart['boost'] = array(strength: 2, ticks: 20);
-				set_pexp(@player, 98);
-				@kart['loc']['y'] -= 1;
+				@kart['loc']['y'] -= 1; // trick kart into thinking it just went uphill
 				set_entity_spec(@kart['engine'], array(blockdata: @kart['engineBlock'].'[lit=true]'));
+				play_sound(@racer, array(sound: 'BLOCK_RESPAWN_ANCHOR_DEPLETE', volume: @kart['camdist']));
+				play_sound(@racer, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5, volume: @kart['camdist']));
 			} else {
-				set_mob_effect(@target, 'speed', 1, 10, true);
+				set_mob_effect(@racer, 'speed', 1, 10, true);
 			}
-			play_sound(@target, array(sound: 'BLOCK_RESPAWN_ANCHOR_DEPLETE', volume: @kart['camdist']));
-			play_sound(@target, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5, volume: @kart['camdist']));
 
 		case 'CAKE':
 			if(@kart) {
 				@kart['boost'] = array(strength: 1, ticks: 40);
-				set_pexp(@player, 98);
 				set_entity_spec(@kart['engine'], array(blockdata: @kart['engineBlock'].'[lit=true]'));
+				play_sound(@racer, array(sound: 'BLOCK_RESPAWN_ANCHOR_DEPLETE', volume: @kart['camdist']));
+				play_sound(@racer, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5, volume: @kart['camdist']));
 			} else {
-				set_mob_effect(@target, 'speed', 0, 10, true);
+				set_mob_effect(@racer, 'speed', 0, 10, true);
 			}
-			play_sound(@target, array(sound: 'BLOCK_RESPAWN_ANCHOR_DEPLETE', volume: @kart['camdist']));
-			play_sound(@target, array(sound: 'ENTITY_GHAST_SHOOT', pitch: 0.5, volume: @kart['camdist']));
 
+		case 'LIGHTNING_ROD':
+			@currentCheckpoint = @race['players'][@player]['checkpoint'];
+			foreach(@p: @opponent in @race['players']) {
+				if(@p !== @player && @opponent['checkpoint'] >= @currentCheckpoint) {
+					if(@kart) {
+						lightning(@opponent['kart']['loc'], true);
+						@opponent['kart']['speed'] = 0.0;
+					} else {
+						lightning(ploc(@p), true);
+						@vehicle = pvehicle(@p);
+						if(@vehicle) {
+							set_mob_effect(@vehicle, 'slowness', 0, 10);
+						} else {
+							set_peffect(@p, 'slowness', 0, 10);
+						}
+					}
+				}
+			}
+			if(@kart) {
+				lightning(@kart['loc'], true);
+			} else {
+				lightning(ploc(@player), true);
+			}
+
+		case 'WOODEN_HOE':
+			@currentCheckpoint = @race['players'][@player]['checkpoint'];
+			foreach(@p: @opponent in @race['players']) {
+				if(@p !== @player && @opponent['checkpoint'] >= @currentCheckpoint) {
+					set_peffect(@p, 'darkness', 0, 10);
+					play_sound(ploc(@p), array(sound: 'ENTITY_SKELETON_HORSE_DEATH', pitch: 0.5, volume: 3), @p);
+				}
+			}
+			play_sound(ploc(@player), array(sound: 'ENTITY_SKELETON_HORSE_DEATH', pitch: 0.5, volume: 3), @player);
 	}
-	@p['itemCooldown'] = 20;
+	@race['players'][@player]['itemCooldown'] = 40;
 
 	// remove item and shift others over
 	@items = pinv(@player);
