@@ -9,7 +9,7 @@ register_command('stats', array(
 		if(@type === 'advancements') {
 			@total = 126; // 26.2
 		} else if(@type === 'recipes') {
-			@total = 1739; // 26.3
+			@total = 1740; // 26.3
 		} else {
 			return(false);
 		}
