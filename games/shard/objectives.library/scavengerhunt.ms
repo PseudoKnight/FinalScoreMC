@@ -1365,7 +1365,10 @@ proc _objective_load(@binds, @rules) {
 			if(is_array(@selectedItem)) {
 				@card[@i][@j] = @selectedItem;
 			} else {
-				@card[@i][@j] = array(players: array(), material: @selectedItem, qty: if(@selectedItem === @multiple, rand(1, 65), 1));
+				@card[@i][@j] = array(
+					players: array(),
+					material: @selectedItem,
+					qty: if(@selectedItem === @multiple, rand(1, material_info(@selectedItem, 'maxStacksize') + 1), 1));
 			}
 		}
 	}
