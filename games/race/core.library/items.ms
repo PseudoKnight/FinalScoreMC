@@ -123,12 +123,8 @@ proc _race_activate_item(@race, @player, @kart) {
 						@opponent['kart']['speed'] = 0.0;
 					} else {
 						lightning(ploc(@p), true);
-						@vehicle = pvehicle(@p);
-						if(@vehicle) {
-							set_mob_effect(@vehicle, 'slowness', 0, 10);
-						} else {
-							set_peffect(@p, 'slowness', 0, 10);
-						}
+						@baseEntity = pvehicle(@p) ||| puuid(@p);
+						set_mob_effect(@baseEntity, 'slowness', 0, 10);
 					}
 				}
 			}
@@ -147,6 +143,40 @@ proc _race_activate_item(@race, @player, @kart) {
 				}
 			}
 			play_sound(ploc(@player), array(sound: 'ENTITY_SKELETON_HORSE_DEATH', pitch: 0.5, volume: 3), @player);
+
+		case 'LIGHT_BLUE_STAINED_GLASS':
+			if(@kart) {
+				set_entity_spec(@kart['shield'], array(item: array(name: 'LIGHT_BLUE_STAINED_GLASS', meta: array(enchants: array(unbreaking: 1)))));
+				@kart['invulnerableTicks'] = 250;
+				set_entity_invulnerable(@kart['collider'], true);
+				play_sound(@kart['camera'], array(sound: 'BLOCK_BEACON_ACTIVATE', pitch: 0, volume: 3));
+				set_timeout(2500, closure(){
+					try(play_sound(@kart['camera'], array(sound: 'BLOCK_BEACON_AMBIENT', pitch: 0, volume: 3)))
+				});
+			} else {
+				set_mob_effect(@racer, 'resistance', 4, 15);
+				play_sound(@racer, array(sound: 'BLOCK_BEACON_ACTIVATE', pitch: 0, volume: 3));
+				set_timeout(2500, closure(){
+					try(play_sound(@racer, array(sound: 'BLOCK_BEACON_AMBIENT', pitch: 0, volume: 3)))
+				});
+			}
+
+		case 'MAGENTA_GLAZED_TERRACOTTA':
+			@currentCheckpoint = @race['players'][@player]['checkpoint'];
+			foreach(@p: @opponent in @race['players']) {
+				if(@p !== @player && @opponent['checkpoint'] >= @currentCheckpoint) {
+					if(@kart) {
+						@opponent['kart']['lockControlTicks'] = 40;
+						set_entity_pose(@opponent['kart']['mannequin'], 'SNEAKING');
+						play_sound(@p, array(sound: 'ENTITY_PARROT_AMBIENT', pitch: 0, volume: 1, seed: 3));
+					} else {
+						@baseEntity = pvehicle(@p) ||| puuid(@p);
+						set_entity_velocity(@baseEntity, array(rand() * 2 - 1, rand(), rand() * 2 - 1));
+					}
+				}
+			}
+			play_sound(ploc(@player), array(sound: 'ENTITY_PARROT_AMBIENT', pitch: 0, volume: 1, seed: 3));
+
 	}
 	@race['players'][@player]['itemCooldown'] = 40;
 

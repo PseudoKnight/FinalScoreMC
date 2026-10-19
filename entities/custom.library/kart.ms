@@ -44,12 +44,15 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 		mannequin: null,
 		head: null,
 		camera: null,
+		shield: null,
 		// status
 		loc: location_shift(@loc, 'up', 0),
 		lastVelocity: array(x: 0, y: 0, z: 0, magnitude: 0.0),
 		speed: 0.0,
 		explode: false,
 		camdist: @camdist,
+		invulnerableTicks: 0,
+		lockControlTicks: 0,
 		// previous inputs
 		driftTurn: 0,
 		// effects
@@ -126,6 +129,10 @@ array proc _kart_spawn(@loc, @player, @design = null, @camdist = 4.0) {
 			translation: array(x: 0, y: 0.62, z: 0.45),
 			scale: array(x: 0.6, y: 0.6, z: 0.6),
 			leftRotation: array(x: 0.347, y: 0.0, z: 0.0, w: 0.938)),
+		shield: array(
+			item: 'AIR',
+			translation: array(x: 0, y: 0.8, z: 0.275),
+			scale: array(x: 1.9, y: 1.6, z: 2.45)),
 		item: array(
 			item: 'AIR',
 			translation: array(x: -0.7, y: 1.2, z: 0.0),
@@ -320,7 +327,23 @@ proc _kart_tick(@player, @kart, @race = null) {
 		set_peffect(@player, 'invisibility', 0, 1, true, false, false);
 
 		// Get kart input
-		@input = get_player_input(@player);
+		@input = null;
+		if(@kart['lockControlTicks'] <= 0) {
+			@input = get_player_input(@player);
+		} else {
+			@input = array(
+				left: false,
+				right: false,
+				forward: true,
+				backward: false,
+				jump: false,
+				sneak: false,
+				sprint: false);
+			@kart['lockControlTicks']--;
+			if(@kart['lockControlTicks'] <= 0) {
+				set_entity_pose(@kart['mannequin'], 'STANDING');
+			}
+		}
 		@acceleration = 0;
 		@turn = 0;
 		if(@input['left'] && !@input['right']) {
@@ -427,17 +450,29 @@ proc _kart_tick(@player, @kart, @race = null) {
 		} else if(@loc['yaw'] < 0) {
 			@loc['yaw'] += 360;
 		}
-		play_sound(@display, array(
-			sound: 'ENTITY_ARMADILLO_UNROLL_FINISH',
-			pitch: 0.4 + @currentVelocity['magnitude'],
-			volume: 1 - @currentVelocity['magnitude'],
-			seed: 1));
 
 		// Check collision
 		@grounded = false;
+		if(@kart['invulnerableTicks'] > 0) {
+			@kart['invulnerableTicks']--;
+			if(@kart['invulnerableTicks'] <= 0) {
+				set_entity_spec(@kart['shield'], array(item: array(name: 'AIR')));
+				set_entity_invulnerable(@kart['collider'], false);
+				play_sound(@display, array(
+					sound: 'BLOCK_TRIAL_SPAWNER_EJECT_ITEM',
+					pitch: 2,
+					volume: 2));
+			}
+		} else {
+			play_sound(@display, array(
+				sound: 'ENTITY_ARMADILLO_UNROLL_FINISH',
+				pitch: 0.4 + @currentVelocity['magnitude'],
+				volume: 1 - @currentVelocity['magnitude'],
+				seed: 1));
+		}
 		if(entity_grounded(@collider)) {
 			@grounded = true;
-			if(@currentVelocity['magnitude'] > 0.1 && !rand(20)) {
+			if(@currentVelocity['magnitude'] > 0.1 && !rand(20) && @kart['invulnerableTicks'] <= 0) {
 				play_sound(@display, array(
 					sound: 'ENTITY_BEE_LOOP',
 					pitch: 0.4 + @currentVelocity['magnitude'] * 1.2,
@@ -447,7 +482,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 			if(@currentVelocity['x'] == 0 && abs(@lastVelocity['x']) > 0.05) { // if velocity stopped on this axis
 				if(abs(@kart['loc']['x'] - @loc['x']) < 0.01) { // if movement stopped on this axis
 					@kart['lastVelocity'] = @currentVelocity;
-					if(abs(@lastVelocity['x']) > abs(@lastVelocity['z'])) { // angle of collision
+					if(abs(@lastVelocity['x']) > abs(@lastVelocity['z']) && @kart['invulnerableTicks'] <= 0) { // angle of collision
 						if(abs(@lastVelocity['x']) > 0.3) { // magnitude of collision
 							@kart['explode'] = true;
 							@kart['lastVelocity'] = @lastVelocity;
@@ -462,15 +497,22 @@ proc _kart_tick(@player, @kart, @race = null) {
 						}
 						@kart['speed'] *= 0.7;
 					}
-					play_named_sound(@display, array(
-						sound: 'block.vault.break',
-						pitch: 1.3 - @kart['speed'],
-						volume: @kart['camdist'] / 3));
+					if(@kart['invulnerableTicks'] <= 0) {
+						play_named_sound(@display, array(
+							sound: 'block.vault.break',
+							pitch: 1.3 - @kart['speed'],
+							volume: @kart['camdist'] / 3));
+					} else {
+						play_named_sound(@display, array(
+							sound: 'item.trident.return',
+							pitch: 1.3 - @kart['speed'],
+							volume: 3));
+					}
 				}
 			} else if(@currentVelocity['z'] == 0 && abs(@lastVelocity['z']) > 0.05) {
 				if(abs(@kart['loc']['z'] - @loc['z']) < 0.01) {
 					@kart['lastVelocity'] = @currentVelocity;
-					if(abs(@lastVelocity['z']) > abs(@lastVelocity['x'])) {
+					if(abs(@lastVelocity['z']) > abs(@lastVelocity['x']) && @kart['invulnerableTicks'] <= 0) {
 						if(abs(@lastVelocity['z']) > 0.3) {
 							@kart['explode'] = true;
 							@kart['lastVelocity'] = @lastVelocity;
@@ -485,10 +527,17 @@ proc _kart_tick(@player, @kart, @race = null) {
 						}
 						@kart['speed'] *= 0.7;
 					}
-					play_named_sound(@display, array(
-						sound: 'block.vault.break',
-						pitch: 1.3 - @kart['speed'],
-						volume: @kart['camdist'] / 3));
+					if(@kart['invulnerableTicks'] <= 0) {
+						play_named_sound(@display, array(
+							sound: 'block.vault.break',
+							pitch: 1.3 - @kart['speed'],
+							volume: @kart['camdist'] / 3));
+					} else {
+						play_named_sound(@display, array(
+							sound: 'item.trident.return',
+							pitch: 1.3 - @kart['speed'],
+							volume: 3));
+					}
 				}
 			} else {
 				@kart['lastVelocity'] = @currentVelocity;
@@ -505,7 +554,7 @@ proc _kart_tick(@player, @kart, @race = null) {
 		// Get vector directions
 		@forward = get_vector(array(yaw: @loc['yaw'], pitch: 0));
 		@velocity = get_vector(array(yaw: @loc['yaw'], pitch: 0), @kart['speed']);
-		@velocity['y'] = @currentVelocity['y'] * 0.9;
+		@velocity['y'] = @currentVelocity['y'];
 		@right = get_vector(array(yaw: @loc['yaw'] + 90, pitch: 0));
 
 		// Move vehicle

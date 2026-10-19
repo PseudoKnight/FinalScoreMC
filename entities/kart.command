@@ -9,10 +9,14 @@ register_command('kart', array(
 		if(_psession()['activity']) {
 			die('You are busy doing something.');
 		}
+		@debug = array_get(@args, 0, '') === 'debug';
 		include('custom.library/kart.ms');
 		@loc = entity_loc(puuid());
 		@loc['pitch'] = 0;
 		@kart = _kart_spawn(@loc, player());
+		if(@debug) {
+			export('debug_kart', @kart);
+		}
 		@mode = pmode();
 		set_pmode('ADVENTURE');
 		set_phealth(20.0);
