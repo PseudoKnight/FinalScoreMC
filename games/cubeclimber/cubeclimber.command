@@ -69,7 +69,7 @@ register_command('cubeclimber', array(
 				if(array_size(@args) > 1) {
 					@player = @args[1];
 				}
-				@pstats = get_value('cubeclimber.player', _get_uuid(to_lower(@player)));
+				@pstats = get_value('cubeclimber.player', _get_uuid(@player));
 				if(!@pstats) {
 					die(color('gold').'No statistics recorded for player '.@player);
 				}

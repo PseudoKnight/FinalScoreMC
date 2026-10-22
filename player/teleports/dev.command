@@ -9,7 +9,7 @@ register_command('dev', array(
 			die(color('yellow').'You are already in dev.');
 		}
 		include('includes.library/teleports.ms');
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(array_index_exists(@pdata, 'dev', 'loc')) {
 			_warmuptp(player(), @pdata['dev']['loc']);
 		} else {

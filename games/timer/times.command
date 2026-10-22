@@ -104,7 +104,7 @@ register_command('times', array(
 				if(!@player) {
 					die('This requires a player.');
 				}
-				@puuid = _get_uuid(to_lower(@player));
+				@puuid = _get_uuid(@player);
 				@courses = get_values('times'.if(@id !== 'all', '.'.@id))
 				if(is_null(@courses)) {
 					die('Unknown arena.');
@@ -224,7 +224,7 @@ register_command('times', array(
 				@courses = get_values('times');
 				@puuid = null;
 				if(@player) {
-					@puuid = _get_uuid(to_lower(@player));
+					@puuid = _get_uuid(@player);
 				} else if(ponline(@sender)) {
 					@puuid = puuid(@sender, true);
 				}
@@ -299,7 +299,7 @@ register_command('times', array(
 				}
 				@uuid = null;
 				if(@player) {
-					@uuid = _get_uuid(to_lower(@player));
+					@uuid = _get_uuid(@player);
 				} else if(ponline(@sender)) {
 					@uuid = puuid(@sender, true);
 				}

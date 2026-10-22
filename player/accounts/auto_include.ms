@@ -5,6 +5,7 @@ proc _get_uuid(@player, @autocomplete = true, @dashless = true) {
 	if(ponline(@player)) {
 		return(puuid(@player, @dashless));
 	} else {
+		@player = to_lower(@player);
 		@uuidDashed = get_value('players', @player);
 		if(is_null(@uuidDashed)) {
 			if(@autocomplete) {
@@ -26,7 +27,10 @@ proc _get_uuid(@player, @autocomplete = true, @dashless = true) {
 	Gets stored data for account under given player name.
 	Will return cached data if available.
 */
-proc _pdata(@player, @autocomplete = true) {
+proc _pdata(@player = '', @autocomplete = true) {
+	if(!@player) {
+		@player = player();
+	}
 	@player = to_lower(@player);
 	@pdata = import('pdata.'.@player);
 	if(is_null(@pdata)) {
@@ -61,7 +65,7 @@ proc _store_pdata(@uuid, @data) {
 	}
 	if(length(@uuid) < 17) {
 		// must be player name
-		@uuid = _get_uuid(to_lower(@uuid));
+		@uuid = _get_uuid(@uuid);
 	}
 	x_new_thread('storePlayerData', closure(){
 		store_value('uuids', @uuid, @data);

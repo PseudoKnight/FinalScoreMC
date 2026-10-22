@@ -28,7 +28,7 @@ register_command('unshare', array(
 			}
 		}
 	
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(!array_index_exists(@pdata, 'shared', @player)) {
 			die(color('gold').'You are not sharing anything with this player.');
 		}

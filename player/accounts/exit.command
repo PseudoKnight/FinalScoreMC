@@ -12,7 +12,7 @@ register_command('exit', array(
 			die('Exit messages must be 88 or less characters.');
 		}
 	
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		@pdata['exit'] = @msg;
 		_store_pdata(player(), @pdata);
 		msg(colorize('&7Set server exit message to: '));

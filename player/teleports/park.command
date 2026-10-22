@@ -9,7 +9,7 @@ register_command('park', array(
 			die(color('yellow').'You are already in Frog Park.');
 		}
 		include('includes.library/teleports.ms');
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(array_index_exists(@pdata, 'minigames', 'loc')) {
 			_warmuptp(player(), @pdata['minigames']['loc'], false, true);
 		} else {

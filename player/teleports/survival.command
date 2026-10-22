@@ -9,7 +9,7 @@ register_command('survival', array(
 			die(color('yellow').'You are already in survival.');
 		}
 		include('includes.library/teleports.ms');
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(array_index_exists(@pdata, 'survival', 'loc')
 		&& (has_permission('group.member') || @pdata['survival']['loc'][3] != 'world')) {
 			_warmuptp(player(), @pdata['survival']['loc']);

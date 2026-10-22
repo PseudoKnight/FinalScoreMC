@@ -9,7 +9,7 @@ register_command('firstseen', array(
 			return(false);
 		}
 		@player = @args[0];
-		@uuid = _get_uuid(to_lower(@player), true, false);
+		@uuid = _get_uuid(@player, true, false);
 		@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
 		@firstPlayed = pfirst_played(@uuid);
 		@minutes = (time() - @firstPlayed) / 60000;

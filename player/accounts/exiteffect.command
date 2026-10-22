@@ -9,7 +9,7 @@ register_command('exiteffect', array(
 		@type = to_lower(@args[0]);
 		@types = array('smoke', 'clear');
 		if(array_contains(@types, @type)) {
-			@pdata = _pdata(player());
+			@pdata = _pdata();
 			if(@type == 'clear') {
 				array_remove(@pdata, 'exiteffect');
 				msg(color('green').'Exit effect cleared.');

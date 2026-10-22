@@ -75,7 +75,7 @@ bind('player_interact', null, array('itemname': 'FIREWORK_ROCKET', 'button': 'ri
 
 	}
 	if(!@gliding && (@world == 'custom' || @world == 'dev')) {
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(!array_index_exists(@pdata, 'support')) {
 			die();
 		}

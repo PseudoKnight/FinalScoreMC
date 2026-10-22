@@ -12,7 +12,7 @@ register_command('lastseen', array(
 		if(ponline(@player)) {
 			die('Um, right now!');
 		}
-		@uuid = _get_uuid(to_lower(@player), true, false);
+		@uuid = _get_uuid(@player, true, false);
 		@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
 		@lastPlayed = plast_played(@uuid);
 		@minutes = (time() - @lastPlayed) / 60000;

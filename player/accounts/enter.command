@@ -12,7 +12,7 @@ register_command('enter', array(
 			die('Enter messages must be 88 or less characters.');
 		}
 
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		@escapedMessage = replace(@msg, '\\', '\\\\');
 		@escapedMessage = replace(@escapedMessage, '"', '\\u0022');
 		@pdata['enter'] = @escapedMessage;

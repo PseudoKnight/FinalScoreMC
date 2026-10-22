@@ -5,7 +5,7 @@ register_command('trail', array(
 		return(array());
 	},
 	executor: closure(@alias, @sender, @args, @info) {
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(!array_index_exists(@pdata, 'support')) {
 			msg('You do not have a livemap trail.');
 		}

@@ -33,7 +33,7 @@ register_command('share', array(
 			_store_pdata(@share['player'], @pdata);
 			tmsg(@share['player'], color('green').'Now sharing '.array_implode(@share['types'], ' and ').' with '.player().'.');
 		
-			@pdata = _pdata(player());
+			@pdata = _pdata();
 			if(!array_index_exists(@pdata, 'shared')) {
 				@pdata['shared'] = associative_array();
 			}

@@ -41,7 +41,7 @@ bind('player_spawn', array('priority': 'LOW'), null, @event) {
 		if(array_index_exists(@worlds[@world], 'respawn')) {
 			@world = @worlds[@world]['respawn'];
 		}
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(array_index_exists(@pdata, 'homes', @world)) {
 			@home = @pdata['homes'][@world][];
 			@home[1] += 1;
@@ -71,7 +71,7 @@ bind('player_teleport', array('priority': 'HIGH'), null, @event) {
 				die(color('yellow').'You cannot spectate a player not in this dimension.');
 			}
 			
-			@pdata = _pdata(player());
+			@pdata = _pdata();
 			if(array_index_exists(@pdata, @toGroup, 'loc')) {
 				@loc = @pdata[@toGroup]['loc'];
 				if(!_world_allows_teleports(@loc[3])) {

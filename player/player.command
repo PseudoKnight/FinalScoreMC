@@ -47,7 +47,7 @@ register_command('player', array(
 
 		} catch(PlayerOfflineException @ex) {
 			# OFFLINE INFO
-			@uuid = _get_uuid(to_lower(@player), true, false);
+			@uuid = _get_uuid(@player, true, false);
 			@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
 			@player = @pdata['name'];
 			@color = _colorname(@player);

@@ -6,7 +6,7 @@ register_command('autojoinaccept', array(
 		return(array());
 	},
 	executor: closure(@alias, @sender, @args, @info) {
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(!@args) {
 			if(array_index_exists(@pdata, 'joinaccept')) {
 				array_remove(@pdata, 'joinaccept');

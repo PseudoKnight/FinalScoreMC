@@ -50,7 +50,7 @@ register_command('timer', array(
 			}
 
 			@timers[@player] = array(@id, time(), 0);
-			@uuid = _get_uuid(to_lower(@player), false);
+			@uuid = _get_uuid(@player, false);
 			@ptime = get_value('times.'.@id, @uuid);
 			if(is_null(@ptime)) {
 				@ptime = 0;
@@ -292,7 +292,7 @@ register_command('timer', array(
 			}
 
 			// Check if time is better than personal best
-			@uuid = _get_uuid(to_lower(@player), false);
+			@uuid = _get_uuid(@player, false);
 			@ptime = get_value('times.'.@id, @uuid);
 			if(@ptime && @time > @ptime) {
 				// Time was not better

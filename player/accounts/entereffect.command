@@ -9,7 +9,7 @@ register_command('entereffect', array(
 		@type = to_lower(@args[0]);
 		@types = array('lightning', 'kaboom', 'resurrect', 'clear');
 		if(array_contains(@types, @type)) {
-			@pdata = _pdata(player());
+			@pdata = _pdata();
 			if(@type == 'clear') {
 				array_remove(@pdata, 'entereffect');
 				msg(color('green').'Enter effect cleared.');

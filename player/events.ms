@@ -6,7 +6,7 @@ bind('player_death', null, null, @event) {
 		@z = floor(@loc['z']);
 		@world = @loc['world'];
 
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		@pdata['death'] = array(@x, @y, @z, @world);
 
 		@stringLoc = "@x,@y,@z "._world_name(@world);
@@ -195,7 +195,7 @@ bind('player_enter_bed', null, null, @event) {
 	}
 
 	if(has_permission('command.sethome')) {
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(!array_index_exists(@pdata, 'homes')) {
 			@pdata['homes'] = associative_array();
 		}

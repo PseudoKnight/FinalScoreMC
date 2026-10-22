@@ -8,7 +8,7 @@ bind('player_join', null, null, @event) {
 			die();
 		}
 
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 
 		if(array_index_exists(@pdata, 'world') && pworld() != @pdata['world']) {
 			@thisGroup = _world_group(pworld());

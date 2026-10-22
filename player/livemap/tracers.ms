@@ -26,7 +26,7 @@ if(extension_exists('CHDynmap')) {
 			die();
 		}
 
-		@pdata = _pdata(player());
+		@pdata = _pdata();
 		if(!array_index_exists(@pdata, 'support')) {
 			die();
 		}
