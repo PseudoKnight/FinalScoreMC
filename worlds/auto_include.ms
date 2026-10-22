@@ -269,7 +269,6 @@ proc _world_time_travel(@world, @targetTime, @ticks) {
 	}
 	@timeDelta = @targetTime - @startTime;
 
-	@daylightCycle = get_gamerule(@world, 'advance_time');
 	set_gamerule(@world, 'advance_time', false);
 
 	@step = array(0);
@@ -278,7 +277,7 @@ proc _world_time_travel(@world, @targetTime, @ticks) {
 		@interp = -(cos(math_const('PI') * @step[0] / @ticks) - 1) / 2;
 		set_world_time(@world, @startTime + integer(round(@timeDelta * @interp)));
 		if(@step[0] == @ticks) {
-			set_gamerule(@world, 'advance_time', @daylightCycle);
+			set_gamerule(@world, 'advance_time', _is_survival_world(@world));
 			export('timetravel.'.@world, null);
 			clear_task();
 		}
