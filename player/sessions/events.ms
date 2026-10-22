@@ -80,7 +80,7 @@ bind('player_join', null, null, @event) {
 			}
 
 			foreach(@p in all_players()) {
-				set_list_name(@p, display_name(@p));
+				set_list_name(@p, display_name(@p).color('gray').' ('._world_name(pworld(@p)).')');
 			}
 			set_plist_header(colorize('&6&lFINALSCORE&e&lMC'));
 		}, player().'join');
@@ -206,6 +206,10 @@ bind('player_join', null, null, @event) {
 			}, player().'join');
 		}
 	});
+}
+
+bind('world_changed', null, null, @event) {
+	set_list_name(display_name().color('gray').' ('._world_name(@event['to']).')');
 }
 
 bind('player_quit', null, null, @event) {

@@ -61,7 +61,7 @@ proc _set_group(@player, @group, @checkInheritance = false) {
 	if(ponline(@player)) {
 		_perm_player(@player);
 		set_display_name(@player, _colorname(@player).@player);
-		set_list_name(@player, display_name(@player));
+		set_list_name(@player, display_name(@player).color('gray').' ('._world_name(pworld(@player)).')');
 	}
 	return(@oldGroup);
 }
