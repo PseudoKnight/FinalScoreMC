@@ -9,26 +9,27 @@ register_command('firstseen', array(
 			return(false);
 		}
 		@player = @args[0];
-		@uuid = _get_uuid(@player, true, false);
-		@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
-		@firstPlayed = pfirst_played(@uuid);
-		@minutes = (time() - @firstPlayed) / 60000;
-		@hours = @minutes / 60
-		@days = @hours / 24
-		@date = simple_date('yyyy-MM-dd', @firstPlayed, 'US/Central');
-		msg('Bukkit says '.@pdata['name'].' was first seen '.
-			if(@days > 14) {
-				@date
-			} else if(@days >= 3) {
-				'over '.floor(@days).' days ago'
-			} else if(@hours >= 2) {
-				'over '.floor(@hours).' hours ago'
-			} else {
-				floor(@minutes).' minutes ago'
+		foreach(@uuid in array_unique(array_normalize(get_values('players', @player)))) {
+			@pdata = _pdata_by_uuid(replace(@uuid, '-', ''));
+			@firstPlayed = pfirst_played(@uuid);
+			@minutes = (time() - @firstPlayed) / 60000;
+			@hours = @minutes / 60
+			@days = @hours / 24
+			@date = simple_date('yyyy-MM-dd', @firstPlayed, 'US/Central');
+			msg('Bukkit says '.@pdata['name'].' was first seen '.
+				if(@days > 14) {
+					@date
+				} else if(@days >= 3) {
+					'over '.floor(@days).' days ago'
+				} else if(@hours >= 2) {
+					'over '.floor(@hours).' hours ago'
+				} else {
+					floor(@minutes).' minutes ago'
+				}
+			);
+			if(array_index_exists(@pdata, 'joined') && @pdata['joined'] != @date) {
+				msg('However, my current data shows '.@pdata['joined'].' was when they first joined.');
 			}
-		);
-		if(array_index_exists(@pdata, 'joined') && @pdata['joined'] != @date) {
-			msg('However, my current data shows '.@pdata['joined'].' was when they first joined.');
 		}
 	}
 ));
