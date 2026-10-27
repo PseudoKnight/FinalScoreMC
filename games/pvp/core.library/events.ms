@@ -318,7 +318,7 @@ proc _bind_events(@pvp) {
 				@playerData['respawn'] = time() + (@arena['respawntime'] * 1000) - 50; // 50ms tick precision
 				@deathLocation = @playerData['deathLocation'];
 				if(!array_contains(sk_current_regions(), @arena['region'])) {
-					@distance = 128;
+					@distance = 320;
 					@closest = '';
 					foreach(@p in array_keys(@pvp['players'])) {
 						if(@p === player() && array_contains(sk_current_regions(), @arena['region'])) {
