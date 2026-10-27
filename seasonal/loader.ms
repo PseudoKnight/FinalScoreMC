@@ -14,7 +14,10 @@ if(@month == 'Dec' && @day > 29 || @month == 'Jan' && @day == 1) {
 	@motd = color('light_purple').'Easter Egg Hunt';
 	include('seasons.library/easter.ms');
 } else if(@month == 'Oct') {
-	@motd = color('gold').'Haunted';
+	@motd = color('gold').'Spooky Season';
+	if(@day > 24) {
+		@motd = color('gold').'Happy Halloween!';
+	}
 	include('seasons.library/halloween.ms');
 }
 export('event', @motd);

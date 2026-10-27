@@ -6,13 +6,13 @@ bind('creature_spawn', null, null, @event) {
 	}
 }
 
-bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
+bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event, @day) {
 	if(sk_region_check_flag(@event['location'], 'deny-spawn')) {
 		die();
 	}
 	@id = @event['id'];
 	@rand = rand(5);
-	if(@rand == 0 && @event['location']['world'] === 'outworld'){
+	if(@rand == 0 && @event['location']['world'] === 'outworld' && @day > 14) {
 		cancel();
 		switch(rand(6)) {
 			case 0:
@@ -47,7 +47,7 @@ bind('creature_spawn', null, array(type: 'ZOMBIE', reason: 'NATURAL'), @event) {
 			boots: array(name: 'LEATHER_BOOTS'),
 		));
 		set_mob_effect(@id, 'invisibility', 0, -1);
-	} else if(@rand == 2 && @event['location']['world'] === 'outworld') {
+	} else if(@rand == 2 && @event['location']['world'] === 'outworld' && @day > 24) {
 		set_mob_equipment(@id, array(
 			helmet: array(name: 'PLAYER_HEAD', meta: array(
 				owneruuid: '5777109f-f9ab-4af6-b87d-59d504a5b437',
@@ -78,61 +78,63 @@ bind('creature_spawn', null, array(type: 'SKELETON', reason: 'NATURAL'), @event)
 	set_mob_equipment(@event['id'], array(helmet: array(name: 'JACK_O_LANTERN')));
 }
 
-bind('entity_damage', array(priority: 'LOWEST'), array(type: 'ZOMBIE', cause: 'ENTITY_ATTACK', world: 'outworld'), @event) {
-	if(has_scoreboard_tag(@event['id'], 'Herobrine')) {
-		try(entity_remove(@event['id']))
-		play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
-		spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
+if(@day > 24) {
+	bind('entity_damage', array(priority: 'LOWEST'), array(type: 'ZOMBIE', cause: 'ENTITY_ATTACK', world: 'outworld'), @event) {
+		if(has_scoreboard_tag(@event['id'], 'Herobrine')) {
+			try(entity_remove(@event['id']))
+			play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
+			spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
+		}
 	}
-}
 
-bind('entity_damage_player', null, array(damager: 'ZOMBIE'), @event) {
-	if(has_scoreboard_tag(@event['id'], 'Herobrine')) {
-		try(entity_remove(@event['id']))
-		play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
-		spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
+	bind('entity_damage_player', null, array(damager: 'ZOMBIE'), @event) {
+		if(has_scoreboard_tag(@event['id'], 'Herobrine')) {
+			try(entity_remove(@event['id']))
+			play_sound(@event['location'], array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.7));
+			spawn_particle(location_shift(@event['location'], 'up'), array(particle: 'CAMPFIRE_COSY_SMOKE', count: 3, yoffset: 1));
+		}
 	}
-}
 
-bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
-	@id = @event['id'];
-	if(entity_exists(@id) && has_scoreboard_tag(@id, 'Herobrine')) {
-		@loc = entity_loc(@id);
-		@timer = array(160);
-		set_interval(50, closure(){
-			@timer[0]--;
-			if(!entity_exists(@id)) {
-				clear_task();
-			} else if(!ponline(@event['player']) || pworld(@event['player']) !== @loc['world'] || @timer[0] < 0) {
-				clear_task();
-				try(entity_remove(@id))
-			} else {
-				@newLoc = entity_loc(@id);
-				@dist = distance(ploc(@event['player']), @newLoc);
-				if(@dist > 14) {
-					play_sound(@newLoc, array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.5 + rand() * 1.5, volume: 2));
-				} else if(@dist > 8) {
-					set_mob_effect(@id, 'invisibility', 1, -1, true, false);
-					set_mob_equipment(@id, array(
-						helmet: null,
-						chestplate: null,
-						leggings: null,
-					));
-					stop_sound(@event['player'], 'ENTITY_EVOKER_PREPARE_ATTACK');
+	bind('target_player', null, array(mobtype: 'ZOMBIE'), @event) {
+		@id = @event['id'];
+		if(entity_exists(@id) && has_scoreboard_tag(@id, 'Herobrine')) {
+			@loc = entity_loc(@id);
+			@timer = array(160);
+			set_interval(50, closure(){
+				@timer[0]--;
+				if(!entity_exists(@id)) {
+					clear_task();
+				} else if(!ponline(@event['player']) || pworld(@event['player']) !== @loc['world'] || @timer[0] < 0) {
+					clear_task();
+					try(entity_remove(@id))
 				} else {
-					set_mob_effect(@id, 'invisibility', 0, 0, true, false);
-					set_mob_equipment(@id, array(
-						helmet: array(name: 'PLAYER_HEAD', meta: array(
-							display: 'Herobrine\'s Head',
-							owneruuid: '00000000-0000-0048-6572-6f6272696e65',
-							texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThiN2NhM2M3ZDMxNGE2MWFiZWQ4ZmMxOGQ3OTdmYzMwYjZlZmM4NDQ1NDI1YzRlMjUwOTk3ZTUyZTZjYiJ9fX0='
-						)),
-						chestplate: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),
-						leggings: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(70, 60, 222))),
-					));
-					play_sound(@newLoc, array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.5 + rand() * 1.5, volume: 2));
+					@newLoc = entity_loc(@id);
+					@dist = distance(ploc(@event['player']), @newLoc);
+					if(@dist > 14) {
+						play_sound(@newLoc, array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.5 + rand() * 1.5, volume: 2));
+					} else if(@dist > 8) {
+						set_mob_effect(@id, 'invisibility', 1, -1, true, false);
+						set_mob_equipment(@id, array(
+							helmet: null,
+							chestplate: null,
+							leggings: null,
+						));
+						stop_sound(@event['player'], 'ENTITY_EVOKER_PREPARE_ATTACK');
+					} else {
+						set_mob_effect(@id, 'invisibility', 0, 0, true, false);
+						set_mob_equipment(@id, array(
+							helmet: array(name: 'PLAYER_HEAD', meta: array(
+								display: 'Herobrine\'s Head',
+								owneruuid: '00000000-0000-0048-6572-6f6272696e65',
+								texture: 'eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOThiN2NhM2M3ZDMxNGE2MWFiZWQ4ZmMxOGQ3OTdmYzMwYjZlZmM4NDQ1NDI1YzRlMjUwOTk3ZTUyZTZjYiJ9fX0='
+							)),
+							chestplate: array(name: 'LEATHER_CHESTPLATE', meta: array(color: array(50, 230, 255))),
+							leggings: array(name: 'LEATHER_LEGGINGS', meta: array(color: array(70, 60, 222))),
+						));
+						play_sound(@newLoc, array(sound: 'ENTITY_EVOKER_PREPARE_ATTACK', pitch: 0.5 + rand() * 1.5, volume: 2));
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 }
