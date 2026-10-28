@@ -18,7 +18,7 @@ bind('entity_damage', array(priority: 'HIGHEST'), array(
 			@isplayer = @event['damagertype'] === 'PLAYER';
 			@damager = @event['damager'];
 
-			if((@isplayer && @ownerUUID !=- puuid(@damager))
+			if((@isplayer && @ownerUUID !== puuid(@damager))
 			|| (!@isplayer && !get_entity_rider(@id))) {
 				cancel();
 				consume();
