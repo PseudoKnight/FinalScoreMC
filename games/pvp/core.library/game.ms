@@ -544,6 +544,10 @@ proc _pvp_start_match(@id) {
 	}
 
 	_bind_events(@pvp);
+	if(array_contains(@arena['flags'], 'spawnmobs')) {
+		set_gamerule(@arena['world'], 'spawn_mobs', true);
+		set_gamerule(@arena['world'], 'spawn_monsters', true);
+	}
 
 	@pvp['interval'] = set_interval(1000, closure(){
 		@check = false;
@@ -872,6 +876,10 @@ proc _pvp_end_match(@id, @winners) {
 	}
 
 	set_gamerule(@arena['world'], 'locator_bar', true);
+	if(array_contains(@arena['flags'], 'spawnmobs')) {
+		set_gamerule(@arena['world'], 'spawn_mobs', false);
+		set_gamerule(@arena['world'], 'spawn_monsters', false);
+	}
 
 	foreach(array_keys(@pvp['players']), @player) {
 		if(array_contains(@winners, @player)) {
