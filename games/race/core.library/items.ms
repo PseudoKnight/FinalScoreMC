@@ -168,7 +168,7 @@ proc _race_activate_item(@race, @player, @kart) {
 					if(@kart) {
 						@opponent['kart']['lockControlTicks'] = 40;
 						set_entity_pose(@opponent['kart']['mannequin'], 'SNEAKING');
-						play_sound(@p, array(sound: 'ENTITY_PARROT_AMBIENT', pitch: 0, volume: 1, seed: 3));
+						play_sound(@racer, array(sound: 'ENTITY_PARROT_AMBIENT', pitch: 0, volume: 1, seed: 3));
 					} else {
 						@baseEntity = pvehicle(@p) ||| puuid(@p);
 						set_entity_velocity(@baseEntity, array(rand() * 2 - 1, rand(), rand() * 2 - 1));
