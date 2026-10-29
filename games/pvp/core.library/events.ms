@@ -235,11 +235,8 @@ proc _bind_events(@pvp) {
 			@drops = array_merge(@drops, @pvp['arena']['deathdrops']);
 		}
 
-		set_pmode('SPECTATOR');
-		set_timeout(10, closure(){
-			@playerData['deathLocation'] = @location;
-			pforce_respawn();
-		});
+		cancel();
+		_player_reset(player(), @pvp);
 
 		foreach(@item in @drops) {
 			@drop = drop_item(@location, @item);
@@ -249,27 +246,19 @@ proc _bind_events(@pvp) {
 		}
 		@deadplayer = spawn_entity('SKELETON', 1, @location, closure(@deadplayer) {
 			add_scoreboard_tag(@deadplayer, 'nodrops');
-			set_mob_equipment(@deadplayer, array(weapon: null));
+			set_mob_equipment(@deadplayer, array(
+				weapon: null,
+				helmet: null, 
+				chestplate: null,
+				leggings: null,
+				boots: null));
 		})[0];
 		set_entity_health(@deadplayer, 0);
 
-		modify_event('drops', null);
-		modify_event('xp', null);
 		set_timeout(1000, closure(){
 			// just in case of a tie
 			_pvp_check_objectives(@id);
 		});
-	}
-
-	@pvp['binds'][] = bind('player_spawn', array(priority: 'HIGH'), null, @event, @pvp, @id) {
-		if(!array_index_exists(@pvp['players'], player())) {
-			die();
-		}
-		consume();
-
-		@arena = @pvp['arena'];
-		@playerData = @pvp['players'][player()];
-		@team = array_get(@playerData, 'team', 0);
 
 		// Respawning
 		if(@arena['respawnmode'] === 'mob'
@@ -315,28 +304,30 @@ proc _bind_events(@pvp) {
 
 			// Teleport
 			if(array_index_exists(@arena, 'respawntime') && @pvp['running'] == 2) {
+				set_pmode('SPECTATOR');
 				@playerData['respawn'] = time() + (@arena['respawntime'] * 1000) - 50; // 50ms tick precision
-				@deathLocation = @playerData['deathLocation'];
 				if(!array_contains(sk_current_regions(), @arena['region'])) {
-					@distance = 320;
-					@closest = '';
-					foreach(@p in array_keys(@pvp['players'])) {
-						if(@p === player() && array_contains(sk_current_regions(), @arena['region'])) {
-							continue();
-						}
-						@pDistance = distance(ploc(@p), @deathLocation);
-						if(@pDistance < @distance) {
-							@distance = @pDistance;
-							@closest = @p;
-						}
-					}
-					if(@closest) {
-						modify_event('location', location_shift(ploc(@closest), 'up'));
+					if(ponline(@killer) && array_contains(sk_current_regions(@killer), @arena['region'])) {
+						set_ploc(ploc(@killer));
 					} else {
-						modify_event('location', location_shift(@arena['spawn'][0][0], 'up'));
+						@distance = 320;
+						@closest = '';
+						foreach(@p in array_keys(@pvp['players'])) {
+							if(@p === player()) {
+								continue();
+							}
+							@pDistance = distance(ploc(@p), @location);
+							if(@pDistance < @distance) {
+								@distance = @pDistance;
+								@closest = @p;
+							}
+						}
+						if(@closest) {
+							set_ploc(ploc(@closest));
+						} else {
+							set_ploc(@arena['spawn'][0][0]);
+						}
 					}
-				} else {
-					modify_event('location', @deathLocation);
 				}
 			} else if(@arena['respawnmode'] == 'mob') {
 				while(@pvp['team'][@team]['respawns']) {
@@ -344,7 +335,7 @@ proc _bind_events(@pvp) {
 					try {
 						@loc = entity_loc(@uuid);
 						@loc[1] -= 1;
-						modify_event('location', @loc);
+						set_ploc(@loc);
 						entity_remove(@uuid);
 						array_remove(@pvp['team'][@team]['respawns'], 0);
 						set_pscore('respawns', @arena['team'][@team]['name'], array_size(@pvp['team'][@team]['respawns']), @id);
@@ -358,7 +349,7 @@ proc _bind_events(@pvp) {
 				_player_to_spectator(player(), @pvp);
 			} else {
 				@r = rand(0, array_size(@arena['spawn'][@team]));
-				modify_event('location', location_shift(@arena['spawn'][@team][@r], 'up'));
+				set_ploc(@arena['spawn'][@team][@r]);
 			}
 		}
 	}
