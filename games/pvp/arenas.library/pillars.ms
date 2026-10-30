@@ -58,6 +58,19 @@ proc _arena_bind_events(@id) {
 			array_remove(@items, @index);
 		}
 	}
+	@potionTypes = array('INFESTED', 'SWIFTNESS', 'LONG_SWIFTNESS',
+			'STRONG_SWIFTNESS', 'SLOWNESS', 'LONG_SLOWNESS', 'STRONG_SLOWNESS',	'STRENGTH',
+			'LONG_STRENGTH', 'STRONG_STRENGTH', 'HARMING', 'STRONG_HARMING', 'HEALING', 'STRONG_HEALING',
+			'LEAPING', 'LONG_LEAPING', 'STRONG_LEAPING', 'OOZING', 'SLOW_FALLING', 'LONG_SLOW_FALLING',
+			'REGENERATION', 'LONG_REGENERATION', 'STRONG_REGENERATION', 'FIRE_RESISTANCE',
+			'LONG_FIRE_RESISTANCE', 'INVISIBILITY', 'LONG_INVISIBILITY', 'NIGHT_VISION',
+			'LONG_NIGHT_VISION', 'WEAKNESS', 'LONG_WEAKNESS', 'WEAVING', 'POISON', 'LONG_POISON',
+			'STRONG_POISON', 'TURTLE_MASTER', 'LONG_TURTLE_MASTER', 'STRONG_TURTLE_MASTER', 'WIND_CHARGED');
+	foreach(@potionType in @potionTypes) {
+		foreach(@itemType in array('POTION', 'SPLASH_POTION', 'TIPPED_ARROW', 'LINGERING_POTION')) {
+			@items[] = array(name: @itemType, meta: array(potiontype: @potionType));
+		}
+	}
 
 	@weapons = array_get(@pvp['arena'], 'weapons', array());
 	if(array_contains(@weapons, 'dynamitestick')) {
@@ -115,26 +128,14 @@ proc _arena_bind_events(@id) {
 				strength: rand(2));
 		} else if(@item === 'POTION' || @item === 'SPLASH_POTION' || @item === 'TIPPED_ARROW'
 		|| @item === 'LINGERING_POTION') {
-			if(rand(2)) {
-				@potionType = array_get_rand(array('INFESTED', 'SWIFTNESS', 'LONG_SWIFTNESS',
-				'STRONG_SWIFTNESS', 'SLOWNESS', 'LONG_SLOWNESS', 'STRONG_SLOWNESS',	'STRENGTH',
-				'LONG_STRENGTH', 'STRONG_STRENGTH', 'HARMING', 'STRONG_HARMING', 'HEALING', 'STRONG_HEALING',
-				'LEAPING', 'LONG_LEAPING', 'STRONG_LEAPING', 'OOZING', 'SLOW_FALLING', 'LONG_SLOW_FALLING',
-				'REGENERATION', 'LONG_REGENERATION', 'STRONG_REGENERATION', 'FIRE_RESISTANCE',
-				'LONG_FIRE_RESISTANCE', 'INVISIBILITY', 'LONG_INVISIBILITY', 'NIGHT_VISION',
-				'LONG_NIGHT_VISION', 'WEAKNESS', 'LONG_WEAKNESS', 'WEAVING', 'POISON', 'LONG_POISON',
-				'STRONG_POISON', 'TURTLE_MASTER', 'LONG_TURTLE_MASTER', 'STRONG_TURTLE_MASTER', 'WIND_CHARGED'));
-				@itemArray['meta'] = array(potiontype: @potionType);
-			} else {
-				@itemArray['meta'] = array(potions: array());
-				@effects = reflect_pull('enum', 'PotionEffectType');
-				do {
-					@effect = array_get_rand(@effects);
-					@itemArray['meta']['potions'][@effect] = array(
-						seconds: rand(1, 480),
-						strength: rand(3));
-				} while(rand(2))
-			}
+			@itemArray['meta'] = array(potions: array());
+			@effects = reflect_pull('enum', 'PotionEffectType');
+			do {
+				@effect = array_get_rand(@effects);
+				@itemArray['meta']['potions'][@effect] = array(
+					seconds: rand(1, 480),
+					strength: rand(3));
+			} while(rand(2))
 		} else if(@item === 'ENCHANTED_BOOK') {
 			@enchants = array(
 				'power', 'flame', 'infinity', 'punch', 'sharpness', 'efficiency', 'fire_aspect', 'knockback',
