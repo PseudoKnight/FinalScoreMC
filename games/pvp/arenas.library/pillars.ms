@@ -50,6 +50,7 @@ proc _arena_bind_events(@id) {
 		'WITHER_SKELETON_SKULL',
 		'GHAST_TEAR',
 		'HEAVY_WEIGHTED_PRESSURE_PLATE',
+		'CLOCK',
 	);
 	foreach(@index: @material in @items) {
 		if(!material_info(@material, 'isItem')
@@ -75,9 +76,12 @@ proc _arena_bind_events(@id) {
 		@items[] = array(name: 'SUNFLOWER', qty: 2, meta: array(display: 'Railgun', rarity: 'RARE'));
 	}
 	if(array_contains(@weapons, 'skullrockets')) {
-		@items[] = array(name: 'WITHER_SKELETON_SKULL', meta: array(display: 'Skull Rocket', rarity: 'RARE'));
+		@items[] = array(name: 'WITHER_SKELETON_SKULL', qty: 2, meta: array(display: 'Skull Rocket', rarity: 'RARE'));
 	}
-	@items[] = array(name: 'CROSSBOW', meta: array(display: 'Bowcaster', damage: 463, projectiles: array(array(name: 'ARROW')), rarity: 'RARE'));
+	if(array_contains(@weapons, 'clock')) {
+		@items[] = array(name: 'CLOCK', meta: array(display: 'Change Time', rarity: 'RARE', damage: 1, maxdamage: 20));
+	}
+	@items[] = array(name: 'CROSSBOW', meta: array(display: 'Bowcaster', damage: 464, projectiles: array(array(name: 'ARROW')), rarity: 'RARE'));
 
 	proc _get_random_item(@itemOptions = @items) {
 		@item = array_get_rand(@itemOptions);

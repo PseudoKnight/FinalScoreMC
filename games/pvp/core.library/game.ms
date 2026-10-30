@@ -353,7 +353,7 @@ proc _pvp_start(@pvp){
 	foreach(@p in array_keys(@pvp['players'])) {
 		bar_add_player(@id, @p);
 	}
-	if(array_index_exists(@arena, 'time')) {
+	if(array_index_exists(@arena, 'time') && !equals_epsilon(@arena['time'], get_world_time(@arena['world']), 100.0)) {
 		_world_time_travel(@arena['world'], @arena['time'], @pvp['arena']['delay'] * 20);
 	}
 	set_interval(1000, closure(){
