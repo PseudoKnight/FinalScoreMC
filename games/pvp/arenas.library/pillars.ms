@@ -51,6 +51,7 @@ proc _arena_bind_events(@id) {
 		'GHAST_TEAR',
 		'HEAVY_WEIGHTED_PRESSURE_PLATE',
 		'CLOCK',
+		'SNOWBALL',
 	);
 	foreach(@index: @material in @items) {
 		if(!material_info(@material, 'isItem')
@@ -93,6 +94,9 @@ proc _arena_bind_events(@id) {
 	}
 	if(array_contains(@weapons, 'clock')) {
 		@items[] = array(name: 'CLOCK', meta: array(display: 'Change Time', rarity: 'RARE', damage: 1, maxdamage: 20));
+	}
+	if(array_contains(@weapons, 'shotgunballs')) {
+		@items[] = array(name: 'SNOWBALL', qty: 2, meta: array(display: 'Shotgun Snowball', rarity: 'RARE'));
 	}
 	@items[] = array(name: 'CROSSBOW', meta: array(display: 'Bowcaster', damage: 464, projectiles: array(array(name: 'ARROW')), rarity: 'RARE'));
 
