@@ -554,5 +554,10 @@ proc _bind_events(@pvp) {
 				@pvp['blocks'][] = array_normalize(@event['location'])[0..3];
 			}
 		}
+		@pvp['binds'][] = bind('player_bucket_empty', null, null, @event, @pvp) {
+			if(array_index_exists(@pvp['players'], player())) {
+				@pvp['blocks'][] = array_normalize(@event['location'])[0..3];
+			}
+		}
 	}
 }
