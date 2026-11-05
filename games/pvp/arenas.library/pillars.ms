@@ -2,6 +2,7 @@ proc _arena_bind_events(@id) {
 	@pvp = import('pvp'.@id);
 	@items = all_materials();
 	@bannedItems = array(
+		// creative items
 		'STRUCTURE_VOID',
 		'COMMAND_BLOCK',
 		'CHAIN_COMMAND_BLOCK',
@@ -14,6 +15,9 @@ proc _arena_bind_events(@id) {
 		'TEST_INSTANCE_BLOCK',
 		'TEST_BLOCK',
 		'LIGHT',
+		'KNOWLEDGE_BOOK',
+		'ENDER_DRAGON_SPAWN_EGG',
+		// water
 		'WATER_BUCKET',
 		'COD_BUCKET',
 		'SALMON_BUCKET',
@@ -21,8 +25,7 @@ proc _arena_bind_events(@id) {
 		'PUFFERFISH_BUCKET',
 		'AXOLOTL_BUCKET',
 		'TADPOLE_BUCKET',
-		'LAVA_BUCKET',
-		'KNOWLEDGE_BOOK',
+		// maps
 		'MAP',
 		'FILLED_MAP',
 		'OCEAN_MONUMENT_MAP',
@@ -41,8 +44,6 @@ proc _arena_bind_events(@id) {
 		'DESERT_PYRAMID_MAP',
 		'ABANDONED_CAMP_MAP',
 		'WARM_OCEAN_RUINS_MAP',
-		'FIREWORK_ROCKET',
-		'ENDER_DRAGON_SPAWN_EGG',
 		// special weapons
 		'RED_CANDLE',
 		'FIRE_CHARGE',
@@ -109,8 +110,17 @@ proc _arena_bind_events(@id) {
 
 		@itemArray = array(name: @item, qty: 1);
 		if(material_info(@item, 'maxStacksize') > 1) {
-			while(!rand(5)) {
-				@itemArray['qty']++;
+			 if(array_contains(array('BRICK', 'GLOWSTONE_DUST', 'BONE'), @item)) {
+				@itemArray['qty'] = 4;
+			} else if(array_contains(array('SCAFFOLDING', 'LADDER', 'VINES', 'TWISTING_VINES', 'WEEPING_VINES'), @item)) {
+				@itemArray['qty'] = 7;
+			} else if(array_contains(array('REDSTONE', 'LAPIS_LAZULI', 'IRON_NUGGET', 'GOLD_NUGGET', 'EMERALD', 'BONE_MEAL',
+					'RAW_COPPER', 'RAW_GOLD', 'RAW_IRON', 'WHEAT', 'BAMBOO'), @item)) {
+				@itemArray['qty'] = 9;
+			} else {
+				while(!rand(5)) {
+					@itemArray['qty']++;
+				}
 			}
 		} else if(rand(2)) {
 			@enchants = get_enchants(@itemArray);
