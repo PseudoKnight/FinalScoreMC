@@ -355,7 +355,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					if(array_index_exists(@room, 'depth')) {
 						continue();
 					}
-					if(@room['width'] <= @maxRoomSize && @room['length'] <= @maxRoomSize && srand(@random) < 0.67) {
+					if(@room['width'] <= @maxRoomSize && @room['length'] <= @maxRoomSize) {
 						// sufficiently split
 						@room['depth'] = 0;
 						@count++;
@@ -369,7 +369,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 						@count++;
 						continue();
 					}
-					if(!@widthTooSmall && srand(@random) < 0.5) {
+					if(!@widthTooSmall && (@lengthTooSmall || srand(@random) < 0.5)) {
 						// split on column
 						@split = @minRoomSize + 1 + integer(srand(@random) * (@room['width'] - @minRoomSize * 2 - 2));
 						@rooms[] = array(
@@ -379,7 +379,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							width: @room['width'] - @split - 2,
 						);
 						@room['width'] = @split - 1;
-					} else if(!@lengthTooSmall) {
+					} else {
 						// split on row
 						@split = @minRoomSize + 1 + integer(srand(@random) * (@room['length'] - @minRoomSize * 2 - 2));
 						@rooms[] = array(
@@ -428,7 +428,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 				// Room shapes determine dominant room features
 				@shape = 'normal';
-				if(@roomData['rugs'] && @roomWidth == @roomLength && @roomWidth > 2 && @roomWidth < 8 && srand(@random) < @roomData['rugs']) {
+				if(@roomData['rugs'] && @roomWidth == @roomLength && @roomWidth > 3 && @roomWidth < 8 && srand(@random) < @roomData['rugs']) {
 					@shape = 'rug';
 					@minHeight = 4;
 				} else if(@roomData['split'] && @roomWidth > 3 && @roomLength > 3 && srand(@random) < @roomData['split']) {
