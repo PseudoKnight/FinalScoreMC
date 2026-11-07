@@ -373,6 +373,14 @@ proc _pvp_start(@pvp){
 						}
 						if(phealth(@p) == 0) {
 							pforce_respawn(@p);
+						} else if(@timeleft[0] == 1) {
+							if(@arena['region'] === 'backrooms') { // special case
+								set_pmode(@p, 'SPECTATOR');
+								set_pflight(@p, false);
+							} else {
+								set_pvelocity(@p, array(x: 0, y: 0, z: 0));
+								set_peffect(@p, 'slowness', 6, 1.5, true, false);
+							}
 						}
 					} catch(PlayerOfflineException @ex) {
 						// they quit during the countdown.

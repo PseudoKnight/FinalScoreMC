@@ -273,13 +273,6 @@ proc _pvp_initialize_players(@id, @players) {
 		set_ploc(@player, @loc);
 		set_pvelocity(@player, array(x: 0, y: 0, z: 0));
 		play_sound(@loc, array(sound: 'ENTITY_FIREWORK_ROCKET_BLAST'), @player);
-		set_timeout(1000, closure(){
-			if(ploc(@player)['y'] < @loc[1]) {
-				set_entity_fall_distance(puuid(@player), 0);
-				set_ploc(@player, @loc);
-				set_pvelocity(@player, array(x: 0, y: 0, z: 0));
-			}
-		});
 	}
 }
 

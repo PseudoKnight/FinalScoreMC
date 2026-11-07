@@ -15,10 +15,9 @@ proc _arena_prepare(@pvp) {
 			@playerSpawns = @spawns[cslice(0, min(array_size(@spawns) - 1, 7))];
 			@pvp['arena']['spawn'] = array(@playerSpawns);
 		}
-		// adjust each spawn location y-1 for set_ploc()
 		foreach(@spawnGroup in @pvp['arena']['spawn']) {
 			foreach(@spawn in @spawnGroup) {
-				@spawn[1] -= 1;
+				@spawn[1] += 1;
 			}
 		}
 
@@ -44,15 +43,60 @@ proc _arena_prepare(@pvp) {
 				@pvp['arena']['mobspawn'][] = array(
 					start: true,
 					respawn: 3600,
-					loc: array(floor(@loc[0]) + 0.5, floor(@loc[1]), floor(@loc[2]) + 0.5, @loc[3], rand(360), 0),
-					type: array(type: 'ARMOR_STAND', scoreboardtags: array('remove')),
+					loc: array(floor(@loc[0]) + rand(), floor(@loc[1]), floor(@loc[2]) + rand(), @loc[3], rand(360), 0),
+					type: array(
+						type: 'ARMOR_STAND',
+						scoreboardtags: array('remove'),
+						tags: array(
+							arms: true,
+							baseplate: false,
+							poses: array(
+								poseHead: array(x: rand(), y: rand(), z: rand()),
+								poseArmLeft: array(x: rand(), y: rand(), z: rand()),
+								poseArmRight: array(x: rand(), y: rand(), z: rand()),
+								poseLegLeft: array(x: rand(), y: rand(), z: rand()),
+								poseLetRight: array(x: rand(), y: rand(), z: rand())))),
+				);
+				@pvp['arena']['mobspawn'][] = array(
+					start: true,
+					respawn: 3600,
+					loc: array(floor(@loc[0]) + rand(), floor(@loc[1]), floor(@loc[2]) + rand(), @loc[3], rand(360), 0),
+					type: array(
+						type: 'ARMOR_STAND',
+						scoreboardtags: array('remove'),
+						tags: array(
+							arms: true,
+							baseplate: false,
+							poses: array(
+								poseHead: array(x: rand(), y: rand(), z: rand()),
+								poseArmLeft: array(x: rand(), y: rand(), z: rand()),
+								poseArmRight: array(x: rand(), y: rand(), z: rand()),
+								poseLegLeft: array(x: rand(), y: rand(), z: rand()),
+								poseLetRight: array(x: rand(), y: rand(), z: rand())))),
+				);
+				@pvp['arena']['mobspawn'][] = array(
+					start: true,
+					respawn: 3600,
+					loc: array(floor(@loc[0]) + rand(), floor(@loc[1]), floor(@loc[2]) + rand(), @loc[3], rand(360), 0),
+					type: array(
+						type: 'ARMOR_STAND',
+						scoreboardtags: array('remove'),
+						tags: array(
+							arms: true,
+							baseplate: false,
+							poses: array(
+								poseHead: array(x: rand(), y: rand(), z: rand()),
+								poseArmLeft: array(x: rand(), y: rand(), z: rand()),
+								poseArmRight: array(x: rand(), y: rand(), z: rand()),
+								poseLegLeft: array(x: rand(), y: rand(), z: rand()),
+								poseLetRight: array(x: rand(), y: rand(), z: rand())))),
 				);
 			} else {
 				@pvp['arena']['mobspawn'][] = array(
 					start: true,
 					respawn: 3600,
 					loc: array(floor(@loc[0]) + 0.5, floor(@loc[1]), floor(@loc[2]) + 0.5, @loc[3], rand(360), 0),
-					type: array(type: 'CREAKING'),
+					type: array(type: 'CREAKING', invulnerable: true),
 				);
 				break();
 			}
