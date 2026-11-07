@@ -70,6 +70,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		treasureRoom: false,
 		randomRoofHeight: false,
 		ascending: false,
+		doubleDoors: true,
 
 		// materials (single or multiple)
 		divider: 'bedrock',
@@ -1125,7 +1126,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								} else if(@column === 'door') {
 									if(@y < @ceilingY - @roomHeight + 2 + if(@roomData['extraDoorHeight'] && @doorAdjacent, @roomData['extraDoorHeight'], 0) + if(@floorData['ascending'], 1, 0)) {
 										if(string_ends_with(@roomData['door'], 'door')) {
-											if(@roomId != -1 && @room['depth'] % 3 == 1) {
+											if(@roomId != -1 && @room['depth'] % 3 == 1&& (!@doorAdjacent || @floorData['doubleDoors'])) {
 												@isTrapDoor = @roomData['extraDoorHeight'] && @doorAdjacent && @y > @ceilingY - @roomHeight + 1;
 												@half = if(@isTrapDoor, 'top', if(@y < @ceilingY - @roomHeight + 1, 'lower', 'upper'));
 												if(@roomMap[@c][@r - 1] == -1) {
