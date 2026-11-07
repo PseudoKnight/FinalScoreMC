@@ -58,6 +58,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		pit: 0.0, // 0.06
 		fireFloor: 0.0, // 0.06
 		rugs: 0.0,
+		split: 0.5,
 		spawnCount: 1,
 		extraDoorHeight: 0,
 		title: '',
@@ -429,6 +430,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				if(@roomData['rugs'] && @roomWidth == @roomLength && @roomWidth > 2 && @roomWidth < 8 && srand(@random) < @roomData['rugs']) {
 					@shape = 'rug';
 					@minHeight = 4;
+				} else if(@roomData['split'] && @roomWidth > 3 && @roomLength > 3 && srand(@random) < @roomData['split']) {
+					@shape = 'split';
 				} else if(@roomData['attic'] && @roomWidth > 2 && @roomLength > 2 && srand(@random) < @roomData['attic']) {
 					@shape = 'attic';
 					@minHeight = 7;
@@ -735,6 +738,24 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								if(is_null(@rowOdd)) {
 									@rowOdd = @r2 % 2;
 									@columnOdd = @c2 % 2;
+								}
+							} if(@room['shape'] === 'split') {
+								if(@roomLength > @roomWidth) {
+									if(@r2 == @r + integer(@roomLength / 2)
+									&& @c2 <= @c + @roomWidth / 2
+									&& @layoutMap[@c - 1][@r2] === 'wall') {
+										@layoutMap[@c2][@r2] = 'wall';
+									} else {
+										@layoutMap[@c2][@r2] = 'room';
+									}
+								} else {
+									if(@c2 == @c + integer(@roomWidth / 2)
+									&& @r2 <= @r + @roomLength / 2
+									&& @layoutMap[@c2][@r - 1] === 'wall') {
+										@layoutMap[@c2][@r2] = 'wall';
+									} else {
+										@layoutMap[@c2][@r2] = 'room';
+									}
 								}
 							}
 						} else if(@layoutMap[@c2][@r2] !== 'door') {
