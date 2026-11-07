@@ -110,12 +110,13 @@ proc _arena_bind_events(@id) {
 
 		@itemArray = array(name: @item, qty: 1);
 		if(material_info(@item, 'maxStacksize') > 1) {
-			 if(array_contains(array('BRICK', 'GLOWSTONE_DUST', 'BONE'), @item)) {
+			 if(array_contains(array('BRICK', 'GLOWSTONE_DUST', 'BONE', 'QUARTZ', 'AMETHYST_SHARD', 'GOLD_INGOT', 'NETHERITE_SCRAP',
+			 		'POPPED_CHORUS_FRUIT'), @item)) {
 				@itemArray['qty'] = 4;
-			} else if(array_contains(array('SCAFFOLDING', 'LADDER', 'VINES', 'TWISTING_VINES', 'WEEPING_VINES'), @item)) {
+			} else if(array_contains(array('SCAFFOLDING', 'LADDER', 'VINE', 'TWISTING_VINES', 'WEEPING_VINES'), @item)) {
 				@itemArray['qty'] = 7;
 			} else if(array_contains(array('REDSTONE', 'LAPIS_LAZULI', 'IRON_NUGGET', 'GOLD_NUGGET', 'EMERALD', 'BONE_MEAL',
-					'RAW_COPPER', 'RAW_GOLD', 'RAW_IRON', 'WHEAT', 'BAMBOO'), @item)) {
+					'RAW_COPPER', 'RAW_GOLD', 'RAW_IRON', 'WHEAT', 'BAMBOO', 'COPPER_NUGGET', 'DRIED_KELP', 'NAUTILUS_SHELL'), @item)) {
 				@itemArray['qty'] = 9;
 			} else {
 				while(!rand(5)) {
@@ -197,6 +198,23 @@ proc _arena_bind_events(@id) {
 				}
 			}
 			@itemArray['meta'] = array(items: @items);
+		} else if(string_ends_with(@item, 'SHULKER_BOX') || @item === 'BARREL') {
+			@itemArray['meta'] = array(inventory: array(_get_random_item()));
+		} else if(@item === 'CHEST') {
+			@items = array();
+			do {
+				@items[] = _get_random_item();
+			} while(rand(2))
+			@itemArray['meta'] = array(inventory: @items);
+		} else if(@item === 'DECORATED_POT') {
+			@itemArray['meta'] = array(item: _get_random_item());
+		} else if(@item === 'FURNACE' || @item === 'BLAST_FURNACE' || @item === 'SMOKER') {
+			@itemArray['meta'] = array(burntime: 20, inventory: array(fuel: array(name: 'COAL', qty: 9)));
+		} else if(@item === 'BREWING_STAND') {
+			@itemArray['meta'] = array(fuel: 20, inventory: array(
+				leftbottle: array(name: 'SPLASH_POTION', meta: array(potiontype: 'AWKWARD')),
+				middlebottle: array(name: 'SPLASH_POTION', meta: array(potiontype: 'AWKWARD')),
+				rightbottle: array(name: 'SPLASH_POTION', meta: array(potiontype: 'AWKWARD'))));
 		}
 		return(@itemArray);
 	}
@@ -216,7 +234,12 @@ proc _arena_bind_events(@id) {
 				@slot = -1;
 				while(++@slot < 9) {
 					if(is_null(@inv[@slot])) {
-						set_pinv(@player, @slot, _get_random_item());
+						@item = _get_random_item();
+						try {
+							set_pinv(@player, @slot, _get_random_item());
+						} catch(Exception @ex) {
+							console(@ex['message']. ' : '.@item);
+						}
 						break();
 					}
 				}
