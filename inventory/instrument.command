@@ -7,7 +7,7 @@ register_command('instrument', array(
 				'guitar', 'harp', 'iron_xylophone', 'pling', 'trumpet', 'trumpet_exposed',
 				'trumpet_weathered', 'trumpet_oxidized', 'xylophone', 'none', '<sound.key|seed>'),
 		array('chromatic', 'pentatonic_major', 'pentatonic_minor', 'harmonic_minor', 'blues',
-				'ionian', 'dorian', 'phrygian_dominant', 'lydian', '<comma separated integer notation>'),
+				'ionian', 'aoelian', 'dorian', 'phrygian_dominant', 'lydian', '<comma separated integer notation>'),
 	),
 	executor: closure(@alias, @player, @args, @info) {
 		@item = pinv(player(), null);
