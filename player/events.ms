@@ -240,50 +240,6 @@ bind('player_interact_entity', null, array(clicked: 'PAINTING', hand: 'main_hand
 	}
 }
 
-// Hand instruments
-@instruments = array(
-	IRON_NUGGET: 'block.note_block.flute',
-	GOLD_NUGGET:'block.note_block.bell',
-	BONE: 'block.note_block.xylophone',
-	IRON_INGOT: 'block.note_block.iron_xylophone',
-	PRISMARINE_CRYSTALS: 'block.note_block.chime',
-);
-
-bind('player_interact', null, null, @event, @instruments) {
-	@item = @event['item'];
-	if(@item && !@item['meta']) {
-		@material = @item['name'];
-		if(array_index_exists(@instruments, @material)) {
-			@loc = location_shift(ploc(), 'up', 3);
-			if(@event['button'] == 'left') {
-				if(@event['block']) {
-					play_named_sound(@loc, array(sound: 'block.note_block.snare', category: 'VOICE'));
-				}
-			} else {
-				@note = floor((-@loc['pitch'] + 90) / 7.5);
-				if(@event['hand'] == 'off_hand') {
-					@note += if(@note < 21, 4, -5);
-				}
-				@pitch = 2 ** ((@note - 12) / 12);
-				play_named_sound(@loc, array(sound: @instruments[@material], pitch: @pitch, category: 'VOICE'));
-				@loc['x'] += rand() * 1.4 - 0.7;
-				@loc['z'] += rand() * 1.4 - 0.7;
-				spawn_particle(@loc, array(particle: 'NOTE', speed: 4.0, xoffset: abs(@loc['pitch'] - 90) / 180));
-			}
-		}
-	}
-}
-
-bind('player_toggle_sneak', null, array(sneaking: true), @event, @instruments) {
-	@mainhand = pinv(player(), null);
-	@offhand = pinv(player(), -106);
-	if(@mainhand && !@mainhand['meta'] && array_index_exists(@instruments, @mainhand['name'])) {
-		play_named_sound(ploc(), array(sound: 'block.note_block.basedrum', category: 'VOICE'));
-	} else if(@offhand && !@offhand['meta'] && array_index_exists(@instruments, @offhand['name'])) {
-		play_named_sound(ploc(), array(sound: 'block.note_block.basedrum', category: 'VOICE'));
-	}
-}
-
 // Survival PVP
 bind('entity_damage_player', null, null, @event) {
 	if(!is_array(@event['data']) # is not dispenser

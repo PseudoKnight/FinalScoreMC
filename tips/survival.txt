@@ -144,7 +144,7 @@ Hats can be put on villagers by right clicking on their head with an item in han
 
 Items can be put in pillager's hands if their crossbow breaks.
 
-You can play instruments with these in your hands: iron_nugget, gold_nugget, bone, iron_ingot, and prismarine crystals.
+Make playable instruments using the /instrument command while holding an item.
 
 Channeling tridents striking a lodestone will summon a thunder storm.
 
