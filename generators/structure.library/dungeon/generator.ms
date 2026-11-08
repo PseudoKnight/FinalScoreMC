@@ -49,7 +49,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		spawnerChance: 0.7,
 		extraDoorChance: 0.0,
 		campfireChance: 0.0,
-		wallTorchChance: 0.0,
+		wallObjectChance: 0.0,
 		randomBlockChance: 0.05,
 		attic: 0.0, // 0.3 is a good value
 		balcony: 0.0, // 0.3
@@ -81,6 +81,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		ceiling: 'stone',
 		column: 'stone',
 		rug: 'red_carpet',
+		wallObject: 'wall_torch',
 
 		// single materials
 		door: 'air',
@@ -1042,13 +1043,17 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										}
 
 									} else if(@y == @groundY + 3
-									&& srand(@random) < @roomData['wallTorchChance']
+									&& srand(@random) < @roomData['wallObjectChance']
 									&& _adjacent_equals(@layoutMap, @c, @r, 'wall')) {
 										@dir = _direction_of_solid(@layoutMap, @c, @r);
 										if(!@dir) {
 											_add_to_chunk(@chunk, @loc, @roomData['room']);
 										} else {
-											_add_to_chunk(@chunk, @loc, 'wall_torch[facing='._opposite_direction(@dir).']');
+											@wallObject = @roomData['wallObject'];
+											if(is_array(@wallObject)) {
+												@wallObject = _array_get_srand(@random, @wallObject);
+											}
+											_add_to_chunk(@chunk, @loc, @wallObject.'[facing='._opposite_direction(@dir).']');
 										}
 
 									} else if(!@doorAdjacent

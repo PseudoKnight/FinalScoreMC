@@ -9,6 +9,8 @@ default:
   extraDoorChance: 0.95
   randomBlockChance: 0.003
   campfireChance: 0.02
+  wallObjectChance: 0.006
+  wallObject: ['wall_torch', 'soul_wall_torch', 'lever', 'ladder', 'stone_button', 'oak_button', 'tripwire_hook', 'light_gray_wall_banner', 'oak_wall_sign']
   pit: 0.05
   roof: false
   door: birch_door

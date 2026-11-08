@@ -21,7 +21,7 @@ default:
   edge: stone_brick_stairs
   doorFrame: polished_andesite
   overhead: 'lantern[hanging=true]'
-  wallTorchChance: 0.07
+  wallObjectChance: 0.07
   randomBlockChance: 0.08
   ascending: true
 floors:
@@ -49,7 +49,7 @@ rooms:
     edge: sculk
     randomRoofHeight: true
     overhead: 'soul_lantern[hanging=true]'
-    wallTorchChance: 0.0
+    wallObjectChance: 0.0
     vine: twisting_vines_plant
     randomBlockChance: 0.2
   chasm:
@@ -63,6 +63,6 @@ rooms:
     lavaPit: 0.0
     waterPit: 0.0
     pit: 0.5
-    wallTorchChance: 0.0
+    wallObjectChance: 0.0
     randomBlockChance: 0.07
     randomblocks: [exposed_cut_copper, exposed_copper, exposed_cut_copper_slab]
