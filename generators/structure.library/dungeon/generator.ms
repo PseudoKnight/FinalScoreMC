@@ -751,12 +751,13 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							|| @roomLength == 1
 							|| @roomWidth == 1
 							|| @room['depth'] == 1
+							|| @roomData['column'] === 'air'
 							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door')
 							|| _adjacent_equals(@layoutMap, @c2, @r2, 'window')) {
 								@layoutMap[@c2][@r2] = 'room';
 							} else if(@roomData['orderedColumns']
-							&& @r2 > @r + 1 && @r2 < @roomLength - 2 + @r
-							&& @c2 > @c + 1 && @c2 < @roomWidth - 2 + @c
+							&& @r2 > @r && @r2 < @roomLength - 1 + @r
+							&& @c2 > @c && @c2 < @roomWidth - 1 + @c
 							&& @rowOdd == @r2 % @rowMod && @columnOdd == @c2 % @columnMod) {
 								@layoutMap[@c2][@r2] = 'column';
 							} else if(!@roomData['orderedColumns'] && srand(@random) > 0.9
@@ -1012,20 +1013,32 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										}
 										_add_to_chunk(@chunk, @loc, @state);
 
+									} else if(@y == @groundY + 3
+									&& srand(@random) < @roomData['wallObjectChance']
+									&& _adjacent_equals(@layoutMap, @c, @r, 'wall')) {
+										@dir = _direction_of_solid(@layoutMap, @c, @r);
+										if(!@dir) {
+											_add_to_chunk(@chunk, @loc, @roomData['room']);
+										} else {
+											@wallObject = @roomData['wallObject'];
+											if(is_array(@wallObject)) {
+												@wallObject = _array_get_srand(@random, @wallObject);
+											}
+											_add_to_chunk(@chunk, @loc, @wallObject.'[facing='._opposite_direction(@dir).']');
+										}
+
 									} else if(@roomData['trim'] !== @roomData['room']
 									&& !@doorAdjacent
 									&& !@randomBlock
-									&& @y == @ceilingY - @roomHeight
-									&& (_adjacent_equals(@layoutMap, @c, @r, 'wall') 
-									|| @roomData['column'] !== 'air' && _adjacent_equals(@layoutMap, @c, @r, 'column')
-									|| @roomData['window'] && _adjacent_equals(@layoutMap, @c, @r, 'window'))) {
+									&& (@y == @ceilingY - @roomHeight || @roomData['trim'] === 'pale_moss_carpet' && @columnRandom > 0.8 && @y == @ceilingY - @roomHeight + 1)
+									&& _direction_of_solid(@layoutMap, @c, @r)) {
 										if(@roomData['trim'] === 'pale_moss_carpet') {
 											@north = @layoutMap[@c][@r - 1];
 											@south = @layoutMap[@c][@r + 1];
 											@west = @layoutMap[@c - 1][@r];
 											@east = @layoutMap[@c + 1][@r];
 											@data = 'pale_moss_carpet[bottom=false,';
-											@height = if(rand(3), 'low', 'tall');
+											@height = if(@columnRandom > 0.6 && @y == @ceilingY - @roomHeight, 'tall', 'low');
 											if(@north === 'wall' 
 											|| @north === 'column' && @roomData['column'] !== 'air' 
 											|| @north === 'window' && @roomData['window']) {
@@ -1050,20 +1063,6 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											_add_to_chunk(@chunk, @loc, @data);
 										} else {
 											_add_to_chunk(@chunk, @loc, @roomData['trim']);
-										}
-
-									} else if(@y == @groundY + 3
-									&& srand(@random) < @roomData['wallObjectChance']
-									&& _adjacent_equals(@layoutMap, @c, @r, 'wall')) {
-										@dir = _direction_of_solid(@layoutMap, @c, @r);
-										if(!@dir) {
-											_add_to_chunk(@chunk, @loc, @roomData['room']);
-										} else {
-											@wallObject = @roomData['wallObject'];
-											if(is_array(@wallObject)) {
-												@wallObject = _array_get_srand(@random, @wallObject);
-											}
-											_add_to_chunk(@chunk, @loc, @wallObject.'[facing='._opposite_direction(@dir).']');
 										}
 
 									} else if(!@doorAdjacent
