@@ -71,6 +71,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		randomRoofHeight: false,
 		ascending: false,
 		doubleDoors: true,
+		orderedColumns: false,
 
 		// materials (single or multiple)
 		divider: 'bedrock',
@@ -709,12 +710,14 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				@c = @room['c1'];
 				@roomWidth = @room['width'];
 				@roomLength = @room['length'];
-				@rowOdd = null;
-				@columnOdd = null;
 				@roomData = @floorData;
 				if(@room['type'] && array_index_exists(@options, 'rooms', @room['type'])) {
 					@roomData = array_merge(@roomData, @options['rooms'][@room['type']]);
 				}
+				@rowMod = 2 + integer(srand(@random) * (@roomLength - 4) / 2);
+				@rowOdd = if(@roomData['orderedColumns'], @r % @rowMod, null);
+				@columnMod = 2 + integer(srand(@random) * (@roomWidth - 4) / 2);
+				@columnOdd = if(@roomData['orderedColumns'], @c % @columnMod, null);
 				for(@r2 = @r - 1, @r2 <= @roomLength + @r, @r2++) {
 					for(@c2 = @c - 1, @c2 <= @roomWidth + @c, @c2++) {
 						@roomHeightMap[@c2][@r2] = @room['height'];
@@ -726,22 +729,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 							if(@roomData['randomRoofHeight']) {
 						 		@roomHeightMap[@c2][@r2] = @room['midheight'] + 2 + integer(srand(@random) * (@maxRoomHeight - @room['midheight'] - 2));
 							}
-							if(@room['shape'] === 'rug'
-							|| @roomLength == 1
-							|| @roomWidth == 1
-							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door')
-							|| _adjacent_equals(@layoutMap, @c2, @r2, 'window')
-							|| (!is_null(@rowOdd) && (@rowOdd != @r2 % 2 || @columnOdd != @c2 % 2))
-							|| srand(@random) < 0.9
-							|| @room['depth'] == 1) {
-								@layoutMap[@c2][@r2] = 'room';
-							} else {
-								@layoutMap[@c2][@r2] = 'column';
-								if(is_null(@rowOdd)) {
-									@rowOdd = @r2 % 2;
-									@columnOdd = @c2 % 2;
-								}
-							} if(@room['shape'] === 'split') {
+							if(@room['shape'] === 'split') {
 								if(@roomLength > @roomWidth) {
 									if(@r2 == @r + integer(@roomLength / 2)
 									&& @c2 <= @c + @roomWidth / 2
@@ -759,6 +747,27 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 										@layoutMap[@c2][@r2] = 'room';
 									}
 								}
+							} else if(@room['shape'] === 'rug'
+							|| @roomLength == 1
+							|| @roomWidth == 1
+							|| @room['depth'] == 1
+							|| _adjacent_equals(@layoutMap, @c2, @r2, 'door')
+							|| _adjacent_equals(@layoutMap, @c2, @r2, 'window')) {
+								@layoutMap[@c2][@r2] = 'room';
+							} else if(@roomData['orderedColumns']
+							&& @r2 > @r + 1 && @r2 < @roomLength - 2 + @r
+							&& @c2 > @c + 1 && @c2 < @roomWidth - 2 + @c
+							&& @rowOdd == @r2 % @rowMod && @columnOdd == @c2 % @columnMod) {
+								@layoutMap[@c2][@r2] = 'column';
+							} else if(!@roomData['orderedColumns'] && srand(@random) > 0.9
+							&& (is_null(@rowOdd) || @rowOdd == @r2 % 2 && @columnOdd == @c2 % 2)) {
+								@layoutMap[@c2][@r2] = 'column';
+								if(is_null(@rowOdd)) {
+									@rowOdd = @r2 % 2;
+									@columnOdd = @c2 % 2;
+								}
+							} else {
+								@layoutMap[@c2][@r2] = 'room';
 							}
 						} else if(@layoutMap[@c2][@r2] !== 'door') {
 							if(@roomData['window']
@@ -850,7 +859,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 								if(@roomData['doorFrame'] && @doorAdjacent) {
 									_add_to_chunk(@chunk, @loc, @roomData['doorFrame']);
 								} else {
-									_add_to_chunk(@chunk, @loc, @roomData['wall']);
+									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
 							} else if(@column === 'empty' || @column === 'divider') {
 								_add_to_chunk(@chunk, @loc, @roomData['divider']);
@@ -1005,6 +1014,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 									} else if(@roomData['trim'] != @roomData['room']
 									&& !@doorAdjacent
+									&& !@randomBlock
 									&& @y == @ceilingY - @roomHeight
 									&& (_adjacent_equals(@layoutMap, @c, @r, 'wall') 
 									|| @roomData['column'] !== 'air' && _adjacent_equals(@layoutMap, @c, @r, 'column')
