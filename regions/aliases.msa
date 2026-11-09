@@ -56,7 +56,7 @@
 						} else if(equals_ic(@value, 'allow')) {
 							sudo('/region flag '.@region.' deny-spawn -e');
 						} else if(equals_ic(@value, 'deny')) {
-							sudo('/region flag '.@region.' deny-spawn CREEPER,ENDERMAN,HUSK,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE,ZOMBIE_VILLAGER,DROWNED,PILLAGER,PHANTOM');
+							sudo('/region flag '.@region.' deny-spawn BOGGED,CREEPER,DROWNED,ENDERMAN,HUSK,PARCHED,PHANTOM,PILLAGER,SKELETON,SLIME,SPIDER,STRAY,WITCH,ZOMBIE,ZOMBIE_VILLAGER');
 						}
 
 					case 'infdisp':
