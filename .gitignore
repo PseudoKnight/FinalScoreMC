@@ -5,4 +5,5 @@ charades/data
 chat/discord/token.txt
 filter.txt
 .vscode
+.idea
 *.code-workspace
