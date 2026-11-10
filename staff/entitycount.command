@@ -5,7 +5,6 @@ register_command('entitycount', array(
 		return(array());
 	},
 	executor: closure(@alias, @sender, @args, @info) {
-		sudo('/paper mobcaps');
 		@entities = all_entities(pworld());
 		@specificTypes = associative_array();
 		foreach(@e in @entities) {
@@ -27,5 +26,8 @@ register_command('entitycount', array(
 		foreach(@type in @sortedTypes) {
 			msg('  '.color('GRAY').to_lower(@type['name']).color('RESET').': '.@type['count']);
 		}
+		set_timeout(1, closure(){
+			sudo('/paper mobcaps');
+		});
 	}
 ));
