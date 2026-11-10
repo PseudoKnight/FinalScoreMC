@@ -13,7 +13,7 @@ floors:
     randomBlockChance: 0.003
     campfireChance: 0.02
     wallObjectChance: 0.006
-    pit: 0.05
+    pit: 0.0
     split: 0.5
     empty: stripped_birch_wood[axis=y]
     divider: pale_moss_block
@@ -45,6 +45,7 @@ rooms:
     column: stripped_birch_wood[axis=y]
     orderedColumns: false
     window: birch_planks
+    pit: 0.05
   columns_ordered:
     column: stripped_birch_wood[axis=y]
     orderedColumns: true
@@ -55,3 +56,5 @@ rooms:
     randomBlockChance: 0.2
   open:
     column: air
+    orderedPit: true
+    pit: 0.3

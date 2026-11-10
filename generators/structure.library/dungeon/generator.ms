@@ -73,6 +73,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		extraDoorHeight: 0,
 		randomRoofHeight: false,
 		orderedColumns: false,
+		orderedPit: false,
 
 		// materials (single or multiple)
 		divider: 'bedrock',
@@ -207,6 +208,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 
 	// Dungeon planning (off the server thread)
 	x_new_thread('DungeonPlanner', closure(){
+		@time = time();
 		@rooms = null;
 		@farthestRoom = null;
 		@exitRoom = null;
@@ -449,7 +451,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 					@shape = 'water_pit';
 				} else if(@roomData['fireFloor'] && @roomWidth > 1 && @roomLength > 1 && srand(@random) < @roomData['fireFloor']) {
 					@shape = 'fire_floor';
-				} else if(@roomData['pit'] && srand(@random) < @roomData['pit']) {
+				} else if(@roomData['pit'] && (!@roomData['orderedPit'] || @roomWidth > 6 && @roomLength > 6) && srand(@random) < @roomData['pit']) {
 					@shape = 'pit';
 					@minHeight = 4;
 				}
@@ -842,8 +844,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									_add_to_chunk(@chunk, @loc, @roomData['floor']);
 								}
 							} else if(@roomShape === 'pit' && @column === 'room') {
-								if(!@doorAdjacent 
-								&& (!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.5)) {
+								if(@roomData['orderedPit'] && @c % 3 > 0 && @r % 3 > 0
+								|| !@roomData['orderedPit'] && !@doorAdjacent && (!_direction_of_solid(@layoutMap, @c, @r) || srand(@random) < 0.5)) {
 									@holeDepth = if(@floor == 0, @floorHeight + 2, @maxRoomHeight);
 									while(@holeDepth-- > 0) {
 										_add_to_chunk(@chunk, location_shift(@loc, 'down', @holeDepth), 'air');
@@ -1905,7 +1907,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 				execute(@start, @end, @spawns, @callback);
 			}
 		}, 'generator');
-
+		console('DungeonPlanner Thread Time: '.(time() - @time).'ms');
 	}); // End thread
 }
 
