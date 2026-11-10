@@ -17,7 +17,9 @@ register_command('runas', array(
 		}
 		console("@cmd was run on @player", false);
 		if(!call_alias(@cmd)) {
-			sudo(@player, @cmd);
+			set_timeout(1, closure() {
+				sudo(@player, @cmd);
+			});
 		}
 	}
 ));
