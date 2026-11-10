@@ -1033,7 +1033,8 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 									} else if(@roomData['trim'] !== @roomData['room']
 									&& !@doorAdjacent
 									&& !@randomBlock
-									&& (@y == @ceilingY - @roomHeight || @roomData['trim'] === 'pale_moss_carpet' && @columnRandom > 0.8 && @y == @ceilingY - @roomHeight + 1)
+									&& (@y == @ceilingY - @roomHeight && @columnRandom > 0.3
+									|| @roomData['trim'] === 'pale_moss_carpet' && @columnRandom > 0.85 && @y == @ceilingY - @roomHeight + 1)
 									&& _direction_of_solid(@layoutMap, @c, @r)) {
 										if(@roomData['trim'] === 'pale_moss_carpet') {
 											@north = @layoutMap[@c][@r - 1];
@@ -1041,7 +1042,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 											@west = @layoutMap[@c - 1][@r];
 											@east = @layoutMap[@c + 1][@r];
 											@data = 'pale_moss_carpet[bottom=false,';
-											@height = if(@columnRandom > 0.6 && @y == @ceilingY - @roomHeight, 'tall', 'low');
+											@height = if(@columnRandom > 0.8 && @y == @ceilingY - @roomHeight, 'tall', 'low');
 											if(@north === 'wall' 
 											|| @north === 'column' && @roomData['column'] !== 'air' 
 											|| @north === 'window' && @roomData['window']) {
