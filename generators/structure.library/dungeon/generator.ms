@@ -37,20 +37,24 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		}
 	}
 	@defaults = array_merge(array(
-		// size
+		// floor only variables
 		minRoomSize: 5,
 		maxRoomSize: 21,
 		minRoomHeight: 3,
 		maxRoomHeight: 3,
 
-		// variability on room features
-		chestCount: 0,
-		barrelCount: 0,
-		spawnerChance: 0.7,
 		extraDoorChance: 0.0,
-		campfireChance: 0.0,
-		wallObjectChance: 0.0,
-		randomBlockChance: 0.05,
+
+		title: '',
+		exit: 'ladder',
+
+		roof: true,
+		bed: false,
+		treasureRoom: false,
+		ascending: false,
+		doubleDoors: true,
+
+		// room variables
 		attic: 0.0, // 0.3 is a good value
 		balcony: 0.0, // 0.3
 		lavaPit: 0.0, // 0.06
@@ -58,19 +62,16 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		pit: 0.0, // 0.06
 		fireFloor: 0.0, // 0.06
 		rugs: 0.0,
-		split: 0.5,
+		split: 0.0,
+		chestCount: 0,
+		barrelCount: 0,
+		spawnerChance: 0.7,
+		campfireChance: 0.0,
+		wallObjectChance: 0.0,
+		randomBlockChance: 0.05,
 		spawnCount: 1,
 		extraDoorHeight: 0,
-		title: '',
-		exit: 'ladder',
-
-		// toggleable features
-		roof: true,
-		bed: false,
-		treasureRoom: false,
 		randomRoofHeight: false,
-		ascending: false,
-		doubleDoors: true,
 		orderedColumns: false,
 
 		// materials (single or multiple)
@@ -135,7 +136,7 @@ proc _generate(@dungeonType, @region, @world, @seed, @callback, @debug = false) 
 		}
 
 		// Ensure these values are arrays
-		foreach(@key in array('wall', 'utility', 'trap', 'spawner', 'randomBlocks', 'floor')) {
+		foreach(@key in array('wall', 'utility', 'trap', 'spawner', 'randomblocks', 'floor')) {
 			if(array_index_exists(@data, @key)) {
 				if(is_string(@data[@key])) {
 					if(@data[@key]) {

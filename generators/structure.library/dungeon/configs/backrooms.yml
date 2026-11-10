@@ -1,35 +1,57 @@
 dungeonEntrance: 'open'
 default:
-  extraDoorHeight: 2
   minRoomHeight: 4
   maxRoomHeight: 4
   minRoomSize: 2
-  maxRoomSize: 27
-  spawnerChance: 0.0
+  maxRoomSize: 29
   extraDoorChance: 0.95
-  randomBlockChance: 0.003
-  campfireChance: 0.02
-  wallObjectChance: 0.006
-  wallObject: ['wall_torch', 'soul_wall_torch', 'lever', 'ladder', 'stone_button', 'oak_button', 'tripwire_hook', 'light_gray_wall_banner', 'oak_wall_sign']
-  pit: 0.05
   roof: false
-  door: birch_door
   doubleDoors: false
 floors:
-  - empty: stone
-    divider: stripped_birch_wood[axis=y]
+  - extraDoorHeight: 2
+    spawnerChance: 0.0
+    randomBlockChance: 0.003
+    campfireChance: 0.02
+    wallObjectChance: 0.006
+    pit: 0.05
+    split: 0.5
+    empty: stripped_birch_wood[axis=y]
+    divider: pale_moss_block
     wall: stripped_birch_wood[axis=y]
     floor: pale_moss_block
     edge: air
-    randomblocks: [brown_mushroom,redstone_wire,bell,jukebox]
+    randomblocks: [brown_mushroom,closed_eyeblossom,redstone_wire,bell,jukebox,crafting_table,smithing_table,fletching_table,lectern,chiseled_bookshelf,loom]
+    wallObject: [wall_torch,soul_wall_torch,lever,ladder,oak_button,tripwire_hook,light_gray_wall_banner,oak_wall_sign]
     trim: pale_moss_carpet
+    door: birch_door
     roomTypes:
+      playroom:
+        chance: 0.01
       columns:
-        chance: 0.5
+        chance: 0.4
+      columns_ordered:
+        chance: 0.1
+      junk:
+        chance: 0.02
       open:
-        chance: 0.5
+        chance: 0.47
 rooms:
+  playroom:
+    randomBlockChance: 0.0
+    column: air
+    wall: [blue_wool,red_wool,green_wool,magenta_wool,yellow_wool,orange_wool,purple_wool,light_blue_wool,cyan_wool,pink_wool,lime_wool,brown_wool]
+    trim: air
   columns:
     column: stripped_birch_wood[axis=y]
+    orderedColumns: false
+    window: birch_planks
+  columns_ordered:
+    column: stripped_birch_wood[axis=y]
+    orderedColumns: true
+    extraDoorHeight: 0
+  junk:
+    column: air
+    wallObjectChance: 0.1
+    randomBlockChance: 0.2
   open:
     column: air
