@@ -219,7 +219,7 @@ proc _arena_bind_events(@id) {
 		return(@itemArray);
 	}
 
-	set_interval(3000, closure() {
+	set_interval(4000, closure() {
 		if(@pvp['running'] > 2) {
 			clear_task();
 			die();
