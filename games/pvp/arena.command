@@ -458,8 +458,9 @@ register_command('arena', array(
 							@arena['chestgroup'] = associative_array();
 						}
 						@loc = ray_trace(64)['block'];
-						if(get_block(@loc) !== 'CHEST') {
-							die(color('gold').'You must look at a chest you want to spawn.');
+						@block = get_block(@loc);
+						if(@block !== 'CHEST') {
+							die(color('gold').'You must look at a chest you want to spawn. You are looking at: '.@block.'.');
 						}
 						@group = @args[3];
 						if(!array_index_exists(@arena['chestgroup'], @group)) {
@@ -481,8 +482,9 @@ register_command('arena', array(
 							@arena['chestspawn'] = array();
 						}
 						@loc = ray_trace(64)['block'];
-						if(get_block(@loc) !== 'CHEST') {
-							die(color('gold').'You must look at a chest.');
+						@block = get_block(@loc);
+						if(@block !== 'CHEST') {
+							die(color('gold').'You must look at a chest. You are looking at: '.@block.'.');
 						}
 						foreach(@key: @chest in @arena['chestspawn']) {
 							if(@chest['loc'][0] == @loc[0]
@@ -525,7 +527,8 @@ register_command('arena', array(
 
 					case 'rsoutput':
 						@loc = pcursor();
-						if(get_block(@loc) === 'TORCH') {
+						@block = get_block(@loc);
+						if(@block === 'TORCH') {
 							if(@action == 'add') {
 								if(!array_index_exists(@arena, 'rsoutput')) {
 									@arena['rsoutput'] = array();
@@ -539,7 +542,7 @@ register_command('arena', array(
 								msg(color('green').'Set arena start/end torch. Do not use the block it is on to transmit power.');
 							}
 						} else {
-							die(color('gold').'You must be looking at a torch placed on top of a block.');
+							die(color('gold').'You must be looking at a torch placed on top of a block. You are looking at: '.@block.'.');
 						}
 
 					case 'rsoutputscore':
@@ -719,8 +722,9 @@ register_command('arena', array(
 					case 'chestspawn':
 						@pcursor = ray_trace(64)['block'];
 						@loc = array(integer(@pcursor[0]), integer(@pcursor[1]), integer(@pcursor[2]), @pcursor[3]);
-						if(get_block(@loc) !== 'CHEST') {
-							die(color('gold').'This is not a chest');
+						@block = get_block(@loc);
+						if(@block !== 'CHEST') {
+							die(color('gold').'This is not a chest. You are looking at: '.@block.'.');
 						}
 						foreach(@chest in @arena['chestspawn']) {
 							if(@chest['loc'][0] == @loc[0]
@@ -1031,8 +1035,9 @@ register_command('arena', array(
 					case 'chestspawn':
 					case 'chestgroup':
 						@loc = ray_trace(64)['block'];
-						if(get_block(@loc) !== 'CHEST') {
-							die(color('gold').'Please look at a chest to remove it.');
+						@block = get_block(@loc);
+						if(@block !== 'CHEST') {
+							die(color('gold').'Please look at a chest to remove it. You are looking at: '.@block.'.');
 						}
 						foreach(@key: @chest in @arena[@setting]) {
 							if(@chest['loc'][0] == @loc[0]
