@@ -80,8 +80,8 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 			if(sk_region_contains(@pvp['arena']['region'], @entity['location'])
 			&& @entity['uuid'] != pvehicle(@player)) {
 				try {
-					@player = player(@entity['uuid']);
-					if(!array_index_exists(@pvp['players'], @player)) {
+					@p = player(@entity['uuid']);
+					if(!array_index_exists(@pvp['players'], @p)) {
 						continue();
 					}
 					if(@hitsound) {
@@ -91,7 +91,7 @@ proc _weapon_hit_scan(@player, @ray, @damage, @effects, @pvp){
 							play_sound(@origin, array(sound: @hitsound), @player);
 						}
 					}
-					@players[] = @player;
+					@players[] = @p;
 				} catch(PlayerOfflineException @ex) {
 					// not a player, but let us still kill it
 				}
