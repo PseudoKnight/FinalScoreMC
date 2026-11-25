@@ -15,26 +15,28 @@ floors:
     wallObjectChance: 0.006
     pit: 0.0
     split: 0.5
-    empty: stripped_birch_wood[axis=y]
+    empty: smooth_sandstone
     divider: pale_moss_block
-    wall: stripped_birch_wood[axis=y]
+    wall: smooth_sandstone
     floor: pale_moss_block
     edge: air
     randomblocks: [brown_mushroom,closed_eyeblossom,redstone_wire,bell,jukebox,crafting_table,smithing_table,fletching_table,lectern,chiseled_bookshelf,loom]
     wallObject: [wall_torch,soul_wall_torch,lever,ladder,oak_button,tripwire_hook,light_gray_wall_banner,oak_wall_sign]
-    trim: pale_moss_carpet
+    trim: air
     door: birch_door
     roomTypes:
       playroom:
         chance: 0.01
       columns:
-        chance: 0.4
+        chance: 0.35
       columns_ordered:
         chance: 0.1
       junk:
         chance: 0.02
       open:
-        chance: 0.47
+        chance: 0.37
+      decay:
+        chance: 0.15
 rooms:
   playroom:
     randomBlockChance: 0.0
@@ -42,12 +44,11 @@ rooms:
     wall: [blue_wool,red_wool,green_wool,magenta_wool,yellow_wool,orange_wool,purple_wool,light_blue_wool,cyan_wool,pink_wool,lime_wool,brown_wool]
     trim: air
   columns:
-    column: stripped_birch_wood[axis=y]
+    column: smooth_sandstone
     orderedColumns: false
     window: birch_planks
-    pit: 0.05
   columns_ordered:
-    column: stripped_birch_wood[axis=y]
+    column: smooth_sandstone
     orderedColumns: true
     extraDoorHeight: 0
   junk:
@@ -58,3 +59,10 @@ rooms:
     column: air
     orderedPit: true
     pit: 0.3
+  decay:
+    randomblocks: ['dead_tube_coral[waterlogged=false]','dead_brain_coral[waterlogged=false]','dead_bubble_coral[waterlogged=false]','dead_fire_coral[waterlogged=false]','dead_horn_coral[waterlogged=false]',frogspawn,closed_eyeblossom,pale_moss_carpet]
+    column: smooth_sandstone
+    orderedColumns: false
+    trim: pale_moss_carpet
+    pit: 0.3
+    wallObject: [shelf_mushroom]

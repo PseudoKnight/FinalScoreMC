@@ -31,13 +31,16 @@ floors:
     deep_dark:
       chance: 0.2
     chasm:
-      chance: 0.2
+      chance: 0.1
+    chasm_alt:
+      chance: 0.1
 rooms:
   stronghold:
     divider: magma_block
     wall: [stone_bricks, stone_bricks, cracked_stone_bricks]
     floor: [stone_bricks, cracked_stone_bricks, mossy_stone_bricks]
     ceiling: [stone_bricks, stone_bricks, stone_bricks, cracked_stone_bricks]
+    split: 0.5
   deep_dark:
     divider: sculk_catalyst
     wall: [sculk]
@@ -63,6 +66,21 @@ rooms:
     lavaPit: 0.0
     waterPit: 0.0
     pit: 0.5
+    wallObjectChance: 0.0
+    randomBlockChance: 0.07
+    randomblocks: [exposed_cut_copper, exposed_copper, exposed_cut_copper_slab]
+  chasm_alt:
+    divider: air
+    wall: [exposed_cut_copper, exposed_copper]
+    column: air
+    ceiling: netherite_block
+    floor: [exposed_cut_copper, exposed_copper, 'exposed_cut_copper_slab[type=top]']
+    utility: []
+    edge: air
+    lavaPit: 0.0
+    waterPit: 0.0
+    pit: 0.5
+    orderedPit: true
     wallObjectChance: 0.0
     randomBlockChance: 0.07
     randomblocks: [exposed_cut_copper, exposed_copper, exposed_cut_copper_slab]
