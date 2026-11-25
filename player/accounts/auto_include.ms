@@ -11,7 +11,19 @@ proc _get_uuid(@player, @autocomplete = true, @dashless = true) {
 			if(@autocomplete) {
 				@uuids = get_values('players.'.@player);
 				if(array_size(@uuids) > 0) {
-					@uuidDashed = array_normalize(@uuids)[0];
+					@selected = array_keys(@uuids)[0];
+					@uuidDashed = @uuids[@selected];
+					if(array_size(@uuids) > 1) {
+						set_timeout(50, closure(){
+							@names = array();
+							foreach(@key: @uuid in @uuids) {
+								if(@key !== @selected) {
+									@names[] = split('.', @key)[1];
+								}
+							}
+							msg('Did you mean: '.array_implode(@names, ', '));
+						});
+					}
 				} else {
 					throw('NotFoundException', 'Could not find player in database matching: '.@player);
 				}
