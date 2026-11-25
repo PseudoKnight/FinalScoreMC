@@ -5,6 +5,9 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 		@length = 0.1;
 	} else {
 		play_sound(ploc(@player), array(sound: 'BLOCK_PORTAL_TRIGGER', category: 'PLAYERS', volume: 0.3), @player);
+		set_timeout(integer((@length - 1.15) * 1000), closure(){
+			set_peffect(@player, 'DARKNESS', 0, 2.3, true, false, false); // contracting fog
+		});
 	}
 	set_timeout(integer(@length * 1000), closure(){
 		if(!ponline(@player)) {
@@ -18,8 +21,8 @@ proc _warmuptp(@player, @loc, @cleareffects = false, @force = false) {
 		if(@cleareffects) {
 			clear_peffects(@player);
 		}
-		set_peffect(@player, 'GLOWING', 0, 1, true, false);
-		set_peffect(@player, 'BLINDNESS', 1, 2, true, false); // expanding fog
+		set_peffect(@player, 'GLOWING', 0, 1, true, false, false);
+		set_peffect(@player, 'BLINDNESS', 1, 2, true, false, false); // expanding fog
 		@particle = array(particle: 'CLOUD', count: 25, speed: 0.05, xoffset: 0.34, yoffset: 0, zoffset: 0.34);
 		spawn_particle(location_shift(@ploc, 'up', 1.9), @particle);
 		spawn_particle(location_shift(@loc, 'up', 2.7), @particle);
